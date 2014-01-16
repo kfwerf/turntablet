@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html class="no-js">
+    <head>
+        
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Web audio - Turntables experiment</title>
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Place favicon.ico and apple-touch-icon(s) in the root directory -->
+        <link rel="stylesheet" href="css/app.css">
+        <script src="js/vendor/modernzr.js"></script>
+    
+    </head>
+    <body>
+        <!--[if lt IE 8]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+
+        <main class="mainContent" role="main">
+            
+            <div class="turntable">
+                <div class="platter-disc" data-spinning="false">
+                    <div class="platter-spindle"></div>
+                </div>
+
+                <div class="rpm-buttons">
+                    <div class="rpm-thirtythree" data-rpm="33" data-rpm-active="true">33</div>
+                     / 
+                    <div class="rpm-fourtyfive" data-rpm="45" data-rpm-active="false">45</div>
+                </div>
+
+                <div class="power-button" data-power="false">Power</div>
+                
+                <div class="startstop-button" data-startstop="false">Start/Stop</div>
+
+                <div class="pitch-fader">
+                    Pitch:
+                    <input class="pitch-handle" data-pitch="0" data-pitchrange="16" type ="range" min ="-100" max="100" step ="1" value ="0"/>
+                </div>
+            </div>
+            
+            <div class="mixer">
+                <div class="channel">
+                    <div class="high-knob">
+                        High:
+                       <input type="range" class="high-handle" type ="range" min ="0" max="100" step ="1" value ="0"> 
+                    </div>
+                    <div class="mid-knob">
+                        Mid:
+                        <input type="range" class="mid-handle" type ="range" min ="0" max="100" step ="1" value ="0"> 
+                    </div>
+                    <div class="low-knob">
+                        Low:
+                        <input type="range" class="low-handle" type ="range" min ="0" max="100" step ="1" value ="0"> 
+                    </div>
+                    <div class="volume-fader">
+                        Volume:
+                        <input type="range" class="volume-handle" type ="range" min ="0" max="100" step ="1" value ="0"> 
+                    </div>
+                </div>
+                <div class="channel">
+                    
+                </div>
+                <div class="cross-fader">
+                    Cross-fader:
+                    <input type="range" class="cross-handle" data-cross="0" type ="range" min ="-100" max="100" step ="1" value ="0">
+                </div>
+            </div>
+
+        </main>
+        
+        <script data-main="js/app" src="js/vendor/require.js"></script>
+    </body>
+</html>
