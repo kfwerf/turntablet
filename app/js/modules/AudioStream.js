@@ -3,8 +3,7 @@
   define(['modules/AudioLoader', 'modules/AudioFilters'], function(AudioLoader, AudioFilters) {
 
     /**
-    	 * @module  AudioStream
-    	 * @description Wrapper for easy loading of an audio file and attaching filters to it
+    	 * AudioStream makes it easy to load audio files and apply basic filters to them
      */
     var AudioStream;
     return AudioStream = (function() {
@@ -20,6 +19,11 @@
         this._load();
       }
 
+
+      /**
+      		 * Resets the audiofilters on each stop as WebAudio does not allow reuse, hence we have to recreate on audio stop
+       */
+
       AudioStream.prototype._reset = function() {
         if (this._audioBuffer) {
           this._audioFilters.setInput(this._audioBuffer);
@@ -28,6 +32,11 @@
           return this._audioOut.connect(this._audioCore.destination);
         }
       };
+
+
+      /**
+      		 * Delegator to the AudioLoader, which gives back a success and failure callback
+       */
 
       AudioStream.prototype._load = function() {
         this._boolLoading = true;
@@ -40,11 +49,23 @@
         })(this));
       };
 
+
+      /**
+      		 * Delegator to the Low filter available via AudioFilters
+      		 * @param {Number} numValue Value between 40 and -40
+       */
+
       AudioStream.prototype.setLow = function(numValue) {
         if (numValue !== void 0) {
           return this._audioFilters.setLowFilter(numValue);
         }
       };
+
+
+      /**
+      		 * Delegator to the Mid filter available via AudioFilters
+      		 * @param {Number} numValue Value between 40 and -40
+       */
 
       AudioStream.prototype.setMid = function(numValue) {
         if (numValue !== void 0) {
@@ -52,11 +73,23 @@
         }
       };
 
+
+      /**
+      		 * Delegator to the High filter available via AudioFilters
+      		 * @param {Number} numValue Value between 40 and -40
+       */
+
       AudioStream.prototype.setHigh = function(numValue) {
         if (numValue !== void 0) {
           return this._audioFilters.setHighFilter(numValue);
         }
       };
+
+
+      /**
+      		 * Delegator to the Volume available via AudioFilters
+      		 * @param {Number} numValue Value between 0 and 1
+       */
 
       AudioStream.prototype.setVolume = function(numValue) {
         if (numValue !== void 0) {
@@ -64,11 +97,23 @@
         }
       };
 
+
+      /**
+      		 * Delegator to the Pitch available via AudioFilters
+      		 * @param {Number} numValue Value between -100 and 100 (%)
+       */
+
       AudioStream.prototype.setPitch = function(numValue) {
         if (numValue !== void 0) {
           return this._audioFilters.setPitch(numValue);
         }
       };
+
+
+      /**
+      		 * Sets play to the audio object. Will try to use the saved playhead if nothing is filled in.
+      		 * @param {Number} numPlayhead The point at which the song should start
+       */
 
       AudioStream.prototype.setPlay = function(numPlayhead) {
         if (!this._boolLoading && !this.boolPlaying) {
@@ -80,7 +125,12 @@
         }
       };
 
-      AudioStream.prototype.setStop = function(numPlayhead) {
+
+      /**
+      		 * Sets stop to the audio object. Will try saving the current playhead status when play is activated. Does a reset as required.
+       */
+
+      AudioStream.prototype.setStop = function() {
         if (!this._boolLoading && this.boolPlaying) {
           this.numPlayhead = this._audioOut.context.currentTime;
           this._audioIn.stop();

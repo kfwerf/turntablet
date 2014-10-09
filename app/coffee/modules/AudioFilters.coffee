@@ -1,4 +1,8 @@
 define [], ->
+	###*
+	 * Adds various filters to the audio source and auto chains them. It gives numerous options and exposes its in and output for usage.
+	 * At basic this function tries to support low, mid, hi, pitch and volume. These are basic channel filters.
+	###
 	class AudioFilters
 		constructor: ( @_audioCore ) ->
 			@numPitch = 0
@@ -36,24 +40,57 @@ define [], ->
 			@_audioLowFilter.connect @_audioMidFilter
 			@_audioMidFilter.connect @_audioHighFilter
 
+		###*
+		 * Returns the original input given in the constructor
+		 * @return {AudioBufferSource}
+		###
 		getInput: ->
 			@_audioSrc
 
+		###*
+		 * Returns the last filter applied in the connect chain
+		 * @return {BiquadFilter}
+		###
 		getOutput: ->
 			@_audioHighFilter
 
+
+		###*
+		 * Sets the low shelf filter
+		 * @param {Number} @numLowFilter Value between -40 and 40
+		###
 		setLowFilter: ( @numLowFilter ) ->
 			@_audioLowFilter.gain.value = @numLowFilter if @_audioLowFilter
 
+
+		###*
+		 * Sets the mid shelf filter
+		 * @param {Number} @numLowFilter Value between -40 and 40
+		###
 		setMidFilter: ( @numMidFilter ) ->
 			@_audioMidFilter.gain.value = @numMidFilter if @_audioMidFilter
 
+
+		###*
+		 * Sets the high shelf filter
+		 * @param {Number} @numLowFilter Value between -40 and 40
+		###
 		setHighFilter: ( @numHighFilter ) ->
 			@_audioHighFilter.gain.value = @numHighFilter if @_audioHighFilter
-			
+		
+
+		###*
+		 * Sets volume gain
+		 * @param {Number} @numVolume Value between 0 and 1
+		###
 		setVolume: ( @numVolume ) ->
 			@_audioVolume.gain.value = @numVolume if @_audioVolume
 		
+
+		###*
+		 * Sets pitch in percentage relative to 100%
+		 * @param {Number} @numPitch Value between -100 and 100 (%)
+		###
 		setPitch: ( @numPitch ) ->
 			@_audioSrc.playbackRate.value = (100 + Number(@numPitch))/100 if @_audioSrc
 
