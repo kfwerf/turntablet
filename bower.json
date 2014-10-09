@@ -1,0 +1,30 @@
+{
+  "name": "Turntablet",
+  "version": "0.0.1",
+  "description": "Dj Studio component, consisting of a turntable and mixer.",
+  "main": "turntablet.js",
+  "moduleType": [
+    "amd"
+  ],
+  "keywords": [
+    "turntablet",
+    "turntable",
+    "audio",
+    "webaudio"
+  ],
+  "authors": [
+    "Kenneth van der Werf"
+  ],
+  "license": "MIT",
+  "homepage": "http://www.duskydesigns.nl",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "requirejs": "~2.1.15"
+  }
+}
