@@ -8,9 +8,10 @@
 
   require.config(config);
 
-  requirejs(['modules/AudioStream'], function(AudioStream) {
-    window.a = new AudioStream('audio/demo.mp3');
-    return window.b = new AudioStream('audio/demo.mp3');
+  requirejs(['modules/AudioMixer'], function(AudioMixer) {
+    window.mixer = new AudioMixer();
+    window.mixer.setAudioChannel('audio/demo.mp3', 'one');
+    return window.mixer.setAudioChannel('audio/demo.mp3', 'two');
   });
 
 }).call(this);

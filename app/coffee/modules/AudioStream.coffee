@@ -3,10 +3,7 @@ define [ 'modules/AudioLoader', 'modules/AudioFilters' ], ( AudioLoader, AudioFi
 	 * AudioStream makes it easy to load audio files and apply basic filters to them
 	###
 	class AudioStream
-		constructor: ( @strFileName ) ->
-			_audioContext = window.AudioContext || window.webkitAudioContext
-			@_audioCore = new _audioContext()
-
+		constructor: ( @_audioCore, @strFileName ) ->
 			@_audioFilters = new AudioFilters @_audioCore
 						
 			@_boolLoading = false

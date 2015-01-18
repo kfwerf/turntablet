@@ -7,11 +7,9 @@
      */
     var AudioStream;
     return AudioStream = (function() {
-      function AudioStream(strFileName) {
-        var _audioContext;
+      function AudioStream(_audioCore, strFileName) {
+        this._audioCore = _audioCore;
         this.strFileName = strFileName;
-        _audioContext = window.AudioContext || window.webkitAudioContext;
-        this._audioCore = new _audioContext();
         this._audioFilters = new AudioFilters(this._audioCore);
         this._boolLoading = false;
         this.boolPlaying = false;

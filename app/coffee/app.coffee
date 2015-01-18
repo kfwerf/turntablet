@@ -4,6 +4,7 @@ config =
 
 require.config config
 
-requirejs [ 'modules/AudioStream' ], ( AudioStream ) ->
-	window.a = new AudioStream 'audio/demo.mp3'
-	window.b = new AudioStream 'audio/demo.mp3'
+requirejs [ 'modules/AudioMixer' ], ( AudioMixer ) ->
+	window.mixer = new AudioMixer()
+	window.mixer.setAudioChannel 'audio/demo.mp3', 'one'
+	window.mixer.setAudioChannel 'audio/demo.mp3', 'two'

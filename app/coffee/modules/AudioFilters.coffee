@@ -7,10 +7,15 @@ define [], ->
 		constructor: ( @_audioCore ) ->
 			@numPitch = 0
 			@numVolume = 1
+			@numGain = 1
 			@numLowFilter = 0
 			@numMidFilter = 0
 			@numHighFilter = 0
 
+		###*
+		 * Sets all filters at once
+		 * @param {AudioBuffer} @_audioBuffer The input to be processed over multiple filters and nodes
+		###
 		setInput: ( @_audioBuffer ) ->
 			@_audioSrc = @_audioCore.createBufferSource()
 			@_audioSrc.buffer = @_audioBuffer
@@ -19,6 +24,9 @@ define [], ->
 
 			@_audioVolume = @_audioCore.createGain()
 			@_audioVolume.gain.value = @numVolume
+
+			@_audioGain = @_audioCore.createGain()
+			@_audioGain.gain.value = @numGain
 
 			@_audioLowFilter = @_audioCore.createBiquadFilter()
 			@_audioLowFilter.type = 'lowshelf'
@@ -35,10 +43,12 @@ define [], ->
 			@_audioHighFilter.frequency.value = 1000
 			@_audioHighFilter.gain.value = @numHighFilter
 
-			@_audioSrc.connect @_audioVolume
-			@_audioVolume.connect @_audioLowFilter
+			@_audioSrc.connect @_audioGain
+			@_audioGain.connect @_audioLowFilter
 			@_audioLowFilter.connect @_audioMidFilter
 			@_audioMidFilter.connect @_audioHighFilter
+			@_audioHighFilter.connect @_audioVolume
+
 
 		###*
 		 * Returns the original input given in the constructor
@@ -47,12 +57,21 @@ define [], ->
 		getInput: ->
 			@_audioSrc
 
+
 		###*
 		 * Returns the last filter applied in the connect chain
 		 * @return {BiquadFilter}
 		###
 		getOutput: ->
-			@_audioHighFilter
+			@_audioVolume
+
+
+		###*
+		 * Sets the gain for overdriving or lowering the general volume
+		 * @param {Number} @numGain Value between -40 and 40
+		###
+		setGain: ( @numGain ) ->
+			@_audioGain.gain.value = @numGain if @_audioGain
 
 
 		###*

@@ -12,10 +12,17 @@
         this._audioCore = _audioCore;
         this.numPitch = 0;
         this.numVolume = 1;
+        this.numGain = 1;
         this.numLowFilter = 0;
         this.numMidFilter = 0;
         this.numHighFilter = 0;
       }
+
+
+      /**
+      		 * Sets all filters at once
+      		 * @param {AudioBuffer} @_audioBuffer The input to be processed over multiple filters and nodes
+       */
 
       AudioFilters.prototype.setInput = function(_audioBuffer) {
         this._audioBuffer = _audioBuffer;
@@ -26,6 +33,8 @@
         }
         this._audioVolume = this._audioCore.createGain();
         this._audioVolume.gain.value = this.numVolume;
+        this._audioGain = this._audioCore.createGain();
+        this._audioGain.gain.value = this.numGain;
         this._audioLowFilter = this._audioCore.createBiquadFilter();
         this._audioLowFilter.type = 'lowshelf';
         this._audioLowFilter.frequency.value = 500;
@@ -38,10 +47,11 @@
         this._audioHighFilter.type = 'highshelf';
         this._audioHighFilter.frequency.value = 1000;
         this._audioHighFilter.gain.value = this.numHighFilter;
-        this._audioSrc.connect(this._audioVolume);
-        this._audioVolume.connect(this._audioLowFilter);
+        this._audioSrc.connect(this._audioGain);
+        this._audioGain.connect(this._audioLowFilter);
         this._audioLowFilter.connect(this._audioMidFilter);
-        return this._audioMidFilter.connect(this._audioHighFilter);
+        this._audioMidFilter.connect(this._audioHighFilter);
+        return this._audioHighFilter.connect(this._audioVolume);
       };
 
 
@@ -61,7 +71,20 @@
        */
 
       AudioFilters.prototype.getOutput = function() {
-        return this._audioHighFilter;
+        return this._audioVolume;
+      };
+
+
+      /**
+      		 * Sets the gain for overdriving or lowering the general volume
+      		 * @param {Number} @numGain Value between -40 and 40
+       */
+
+      AudioFilters.prototype.setGain = function(numGain) {
+        this.numGain = numGain;
+        if (this._audioGain) {
+          return this._audioGain.gain.value = this.numGain;
+        }
       };
 
 
