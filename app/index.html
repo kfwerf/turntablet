@@ -5,20 +5,39 @@
 	<title>Document</title>
 </head>
 <body>
-	
-	<main>
-		
-		<div class="channel" audio-channel>
-			<div class="filters" audio-filters>
-				<input type="range" name="high" audio-filter-high min="-32" value="0" max="32" />
-				<input type="range" name="mid" audio-filter-mid min="-32" value="0" max="32" />
-				<input type="range" name="low" audio-filter-low min="-32" value="0" max="32" />
+
+	<section turntable-platter>
+	</section>
+
+	<section audio-channel>
+		<section audio-filters>
+			<div audio-filter-wrapper>
+				<label>Gain</label>
+				<input type="range" audio-filter audio-gain-filter min="-32" max="32" />
 			</div>
-		</div>		
+			<div audio-filter-wrapper>
+				<label>High</label>
+				<input type="range" audio-filter audio-high-filter min="-32" max="32" />
+			</div>
+			<div audio-filter-wrapper>
+				<label>Mid</label>
+				<input type="range" audio-filter audio-mid-filter min="-32" max="32" />
+			</div>
+			<div audio-filter-wrapper>
+				<label>Low</label>
+				<input type="range" audio-filter audio-low-filter min="-32" max="32" />
+			</div>
+		</section>
+		<div audio-volume-wrapper>
+			<label>Volume</label>
+			<input type="range" audio-volume />
+		</div>
+		<div audio-controls>
+			<div audio-play>Play</div>
+			<div audio-pause>Pause</div>
+		</div>
+	</section>
 
-	</main>
-
-	<script data-main="js/app" src="js/components/requirejs/require.js"></script>
-
+	<script data-main="js/app" src="js/components/requirejs/require.js"></script>	
 </body>
 </html>

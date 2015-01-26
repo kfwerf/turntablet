@@ -8,10 +8,11 @@
 
   require.config(config);
 
-  requirejs(['modules/AudioMixer'], function(AudioMixer) {
+  requirejs(['modules/AudioMixer', 'modules/AbstractCircleTouch'], function(AudioMixer, AbstractCircleTouch) {
     window.mixer = new AudioMixer();
     window.mixer.setAudioChannel('audio/demo.mp3', 'one');
-    return window.mixer.setAudioChannel('audio/demo.mp3', 'two');
+    window.mixer.setAudioChannel('audio/demo.mp3', 'two');
+    return window.touch = new AbstractCircleTouch();
   });
 
 }).call(this);

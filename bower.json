@@ -25,6 +25,7 @@
     "tests"
   ],
   "dependencies": {
-    "requirejs": "~2.1.15"
+    "requirejs": "~2.1.15",
+    "polymer": "~0.5.2"
   }
 }
