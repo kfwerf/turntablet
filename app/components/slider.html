@@ -1,0 +1,13 @@
+<polymer-element name="audio-slider" attributes="min, max, label">
+  <template>
+    <label>{{sliderLabel}}</label>
+    <input type="range" min="{{sliderMin}}" max="{{sliderMax}}" />
+  </template>
+  <script>
+    Polymer({
+      sliderLabel: 'Gain',
+      sliderMin: -32,
+      sliderMax> 32
+    });
+  </script>
+</polymer-element>
