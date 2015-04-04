@@ -1,13 +1,14 @@
 'use strict';
 
-import AudioChannel from './com/codinginspace/audio/AudioChannel';
+import AudioMixer from './com/codinginspace/audio/AudioMixer';
 
 let AudioContext = window.AudioContext || window.webkitAudioContext;
 let objCurrentContext = new AudioContext();
 
-let objAudioChannel = new AudioChannel(objCurrentContext, {
-  audioFile: 'http://localhost/turntablet/app/audio/demo.mp3',
-  channelId: 0
+let objAudioMixer = new AudioMixer();
+
+objAudioMixer.getAudioChannelById(0).loadAudioChannel({
+  audioFile: 'audio/demo.mp3'
 });
 
-window.objAudioChannel = objAudioChannel;
+window.objAudioMixer = objAudioMixer;

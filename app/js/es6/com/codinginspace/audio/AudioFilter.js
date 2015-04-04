@@ -10,49 +10,49 @@ export default class AudioFilter {
   constructor(objAudioContext, strType = 'volume', numAmount = 0) {
     this.objAudioContext = objAudioContext;
     this.strType = strType;
-    this.numAmount = numAmount;
 
     switch (strType) {
     case 'volume':
       this.objAudio = this.objAudioContext.createGain();
-      this.objAudio.gain.volume = this.numAmount;
+      this.objAudio.gain.volume = numAmount;
       break;
     case 'gain':
       this.objAudio = this.objAudioContext.createGain();
-      this.objAudio.gain.value = this.numAmount;
+      this.objAudio.gain.value = numAmount;
       break;
     case 'low':
       this.objAudio = this.objAudioContext.createBiquadFilter();
       this.objAudio.type = 'lowshelf';
       this.objAudio.frequency.value = 500;
-      this.objAudio.gain.value = this.numAmount;
+      this.objAudio.gain.value = numAmount;
       break;
     case 'mid':
       this.objAudio = this.objAudioContext.createBiquadFilter();
       this.objAudio.type = 'peaking';
       this.objAudio.frequency.value = 750;
-      this.objAudio.gain.value = this.numAmount;
+      this.objAudio.gain.value = numAmount;
       break;
     case 'high':
       this.objAudio = this.objAudioContext.createBiquadFilter();
       this.objAudio.type = 'highshelf';
       this.objAudio.frequency.value = 1000;
-      this.objAudio.gain.value = this.numAmount;
+      this.objAudio.gain.value = numAmount;
       break;
     }
+
   }
-  setValue(numAmount = 0) {
-    this.numAmount = numAmount;
-    if (this.strType === 'volume') {
-      this.objAudio.gain.volume = numAmount;
-    } else {
-      this.objAudio.gain.value = numAmount;
-    }
+  get filterType() {
+    return this.strType;
   }
-  getCore() {
+  get filterObject() {
     return this.objAudio;
   }
-  getValue() {
-    return this.objAudio.gainvalue;
+  set filterValue(numAmount = 0) {
+    let strKey = this.strType === 'volume' ? 'volume' : 'value';
+    this.objAudio.gain[strKey] = numAmount;
+  }
+  get filterValue() {
+    let strKey = this.strType === 'volume' ? 'volume' : 'value';
+    return this.objAudio.gain[strKey];
   }
 }

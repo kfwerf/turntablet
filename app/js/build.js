@@ -3,21 +3,22 @@
 
 var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
 
-var _AudioChannel = require('./com/codinginspace/audio/AudioChannel');
+var _AudioMixer = require('./com/codinginspace/audio/AudioMixer');
 
-var AudioChannel = _interopRequire(_AudioChannel);
+var AudioMixer = _interopRequire(_AudioMixer);
 
 var AudioContext = window.AudioContext || window.webkitAudioContext;
 var objCurrentContext = new AudioContext();
 
-var objAudioChannel = new AudioChannel(objCurrentContext, {
-  audioFile: 'http://localhost/turntablet/app/audio/demo.mp3',
-  channelId: 0
+var objAudioMixer = new AudioMixer();
+
+objAudioMixer.getAudioChannelById(0).loadAudioChannel({
+  audioFile: 'audio/demo.mp3'
 });
 
-window.objAudioChannel = objAudioChannel;
+window.objAudioMixer = objAudioMixer;
 
-},{"./com/codinginspace/audio/AudioChannel":2}],2:[function(require,module,exports){
+},{"./com/codinginspace/audio/AudioMixer":5}],2:[function(require,module,exports){
 'use strict';
 
 var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
@@ -50,6 +51,10 @@ var AudioChannel = (function () {
 
     this.objAudioContext = objAudioContext;
     this.objAudioInformation = objAudioInformation;
+    this.objAudioFilters = new AudioFilters(this.objAudioContext);
+    this.boolLoading = false;
+    this.numStartPoint = 0;
+    this.numPitch = 0;
     if (objAudioInformation) {
       this.loadAudioChannel(objAudioInformation);
     }
@@ -63,33 +68,129 @@ var AudioChannel = (function () {
       var objAudioInformation = arguments[0] === undefined ? this.objAudioInformation : arguments[0];
 
       this.objAudioInformation = objAudioInformation;
+      this.boolLoading = true;
       /**
        * Download array buffer from file
        * Convert to audio buffer for audio context usage
-       * Attach as buffer to new buffer source
-       * Attach audio filters API
        */
-      console.log('AudioChannel', 'Loading file ' + this.objAudioInformation.audioFile);
+      console.log('com.codinginspace.audio.AudioChannel', 'Loading file ' + this.objAudioInformation.audioFile);
       new Loader(this.objAudioInformation.audioFile).then(function (arrBuffer) {
         _this.objAudioContext.decodeAudioData(arrBuffer, function (arrAudioBuffer) {
+          _this.boolLoading = false;
           _this.arrAudioBuffer = arrAudioBuffer;
-          _this.objAudioSource = _this.objAudioContext.createBufferSource();
-          _this.objAudioSource.buffer = _this.arrAudioBuffer;
-          _this.objAudioFilters = new AudioFilters(_this.objAudioContext, _this.objAudioSource);
-          _this.objAudioFilters.doCoupling();
-          console.log('AudioChannel', 'File loaded and coupled. Audio channel is ready for usage.');
+          _this.initAudioSource();
         });
       });
     }
   }, {
-    key: 'setFilterValue',
-    value: function setFilterValue(strFilterType, numFilterValue) {
-      if (this.objAudioFilters) {
-        var objFilter = this.objAudioFilters.getFilter(strFilterType);
-        if (objFilter) {
-          objFilter.setValue(numFilterValue);
-          return objFilter;
+    key: 'initAudioSource',
+    value: function initAudioSource() {
+      /**
+       * NOTE AudioSources can only be used once
+       * To reuse after a stop we have to re-init the audioSource
+       */
+      this.objAudioSource = this.objAudioContext.createBufferSource();
+      this.objAudioSource.buffer = this.arrAudioBuffer;
+      this.objAudioFilters.objAudioSource = this.objAudioSource;
+      this.objAudioFilters.doCoupling();
+      console.log('com.codinginspace.audio.AudioChannel', 'File loaded and coupled. Audio channel is ready for usage.');
+    }
+  }, {
+    key: 'setFilterValueByType',
+    value: function setFilterValueByType(strType, numValue) {
+      this.objAudioFilters.setFilterValueByType(strType, numValue);
+    }
+  }, {
+    key: 'getFilterValueByType',
+    value: function getFilterValueByType(strType) {
+      return this.objAudioFilters.getFilterValueByType(strType);
+    }
+  }, {
+    key: 'volumeValue',
+    get: function () {
+      return this.getFilterValueByType('volume');
+    },
+    set: function (numValue) {
+      this.setFilterValueByType('volume', numValue);
+    }
+  }, {
+    key: 'gainValue',
+    get: function () {
+      return this.getFilterValueByType('gain');
+    },
+    set: function (numValue) {
+      this.setFilterValueByType('gain', numValue);
+    }
+  }, {
+    key: 'lowValue',
+    get: function () {
+      return this.getFilterValueByType('low');
+    },
+    set: function (numValue) {
+      this.setFilterValueByType('low', numValue);
+    }
+  }, {
+    key: 'midValue',
+    get: function () {
+      return this.getFilterValueByType('mid');
+    },
+    set: function (numValue) {
+      this.setFilterValueByType('mid', numValue);
+    }
+  }, {
+    key: 'highValue',
+    get: function () {
+      return this.getFilterValueByType('high');
+    },
+    set: function (numValue) {
+      this.setFilterValueByType('high', numValue);
+    }
+  }, {
+    key: 'pitchValue',
+    set: function (numValue) {
+      this.numPitch = (100 + Number(numValue)) / 100;
+      if (this.objAudioSource) {
+        this.objAudioSource.playbackRate.value = this.numPitch;
+      }
+    },
+    get: function () {
+      return this.numPitch;
+    }
+  }, {
+    key: 'playChannel',
+    value: function playChannel() {
+      var numStartPoint = arguments[0] === undefined ? this.numStartPoint : arguments[0];
+
+      if (this.objAudioSource) {
+        if (this.boolPlaying) {
+          this.stopChannel();
         }
+        if (this.numPitch) {
+          this.pitchValue = numPitch;
+        }
+        this.objAudioSource.start(0, numStartPoint);
+        this.boolPlaying = true;
+      }
+    }
+  }, {
+    key: 'cueChannel',
+    value: function cueChannel() {
+      this.arrCuePoints = this.arrCuePoints || [];
+      this.arrCuePoint.push(this.objAudioSource.context.currentTime);
+    }
+  }, {
+    key: 'pauseChannel',
+    value: function pauseChannel() {
+      this.numStartPoint = this.objAudioSource.context.currentTime;
+      this.stopChannel();
+    }
+  }, {
+    key: 'stopChannel',
+    value: function stopChannel() {
+      if (this.objAudioSource) {
+        this.objAudioSource.stop();
+        this.initAudioSource();
+        this.boolPlaying = false;
       }
     }
   }]);
@@ -100,7 +201,7 @@ var AudioChannel = (function () {
 module.exports = AudioChannel;
 ;
 
-},{"../utils/Loader":5,"./AudioFilters":4}],3:[function(require,module,exports){
+},{"../utils/Loader":6,"./AudioFilters":4}],3:[function(require,module,exports){
 'use strict';
 
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
@@ -123,59 +224,58 @@ var AudioFilter = (function () {
 
     this.objAudioContext = objAudioContext;
     this.strType = strType;
-    this.numAmount = numAmount;
 
     switch (strType) {
       case 'volume':
         this.objAudio = this.objAudioContext.createGain();
-        this.objAudio.gain.volume = this.numAmount;
+        this.objAudio.gain.volume = numAmount;
         break;
       case 'gain':
         this.objAudio = this.objAudioContext.createGain();
-        this.objAudio.gain.value = this.numAmount;
+        this.objAudio.gain.value = numAmount;
         break;
       case 'low':
         this.objAudio = this.objAudioContext.createBiquadFilter();
         this.objAudio.type = 'lowshelf';
         this.objAudio.frequency.value = 500;
-        this.objAudio.gain.value = this.numAmount;
+        this.objAudio.gain.value = numAmount;
         break;
       case 'mid':
         this.objAudio = this.objAudioContext.createBiquadFilter();
         this.objAudio.type = 'peaking';
         this.objAudio.frequency.value = 750;
-        this.objAudio.gain.value = this.numAmount;
+        this.objAudio.gain.value = numAmount;
         break;
       case 'high':
         this.objAudio = this.objAudioContext.createBiquadFilter();
         this.objAudio.type = 'highshelf';
         this.objAudio.frequency.value = 1000;
-        this.objAudio.gain.value = this.numAmount;
+        this.objAudio.gain.value = numAmount;
         break;
     }
   }
 
   _createClass(AudioFilter, [{
-    key: 'setValue',
-    value: function setValue() {
-      var numAmount = arguments[0] === undefined ? 0 : arguments[0];
-
-      this.numAmount = numAmount;
-      if (this.strType === 'volume') {
-        this.objAudio.gain.volume = numAmount;
-      } else {
-        this.objAudio.gain.value = numAmount;
-      }
+    key: 'filterType',
+    get: function () {
+      return this.strType;
     }
   }, {
-    key: 'getCore',
-    value: function getCore() {
+    key: 'filterObject',
+    get: function () {
       return this.objAudio;
     }
   }, {
-    key: 'getValue',
-    value: function getValue() {
-      return this.objAudio.gainvalue;
+    key: 'filterValue',
+    set: function () {
+      var numAmount = arguments[0] === undefined ? 0 : arguments[0];
+
+      var strKey = this.strType === 'volume' ? 'volume' : 'value';
+      this.objAudio.gain[strKey] = numAmount;
+    },
+    get: function () {
+      var strKey = this.strType === 'volume' ? 'volume' : 'value';
+      return this.objAudio.gain[strKey];
     }
   }]);
 
@@ -206,53 +306,71 @@ var AudioFilter = _interopRequire(_AudioFilter);
  */
 
 var AudioFilters = (function () {
-  function AudioFilters(objAudioContext, objAudioSource) {
+  function AudioFilters(objAudioContext) {
+    var objAudioSource = arguments[1] === undefined ? false : arguments[1];
+
     _classCallCheck(this, AudioFilters);
 
     this.objAudioContext = objAudioContext;
     this.objAudioSource = objAudioSource;
+    // TODO Might want to remove this later, serves no purpose now
+    this.objFilterValues = {
+      volume: 1,
+      gain: 1,
+      low: 0,
+      mid: 0,
+      high: 0
+    };
     this.objFilters = {
-      volume: new AudioFilter(this.objAudioContext, 'volume', 1),
-      gain: new AudioFilter(this.objAudioContext, 'gain', 1),
-      low: new AudioFilter(this.objAudioContext, 'low', 0),
-      mid: new AudioFilter(this.objAudioContext, 'mid', 0),
-      high: new AudioFilter(this.objAudioContext, 'high', 0)
+      volume: new AudioFilter(this.objAudioContext, 'volume', this.objFilterValues.volume),
+      gain: new AudioFilter(this.objAudioContext, 'gain', this.objFilterValues.gain),
+      low: new AudioFilter(this.objAudioContext, 'low', this.objFilterValues.low),
+      mid: new AudioFilter(this.objAudioContext, 'mid', this.objFilterValues.mid),
+      high: new AudioFilter(this.objAudioContext, 'high', this.objFilterValues.high)
     };
     this.arrCouplingOrder = ['volume', 'gain', 'low', 'mid', 'high'];
   }
 
   _createClass(AudioFilters, [{
+    key: 'getFilterByType',
+    value: function getFilterByType(strType) {
+      return this.objFilters[strType];
+    }
+  }, {
+    key: 'getFilterObjectbyType',
+    value: function getFilterObjectbyType(strType) {
+      return this.getFilterByType(strType).filterObject;
+    }
+  }, {
+    key: 'setFilterValueByType',
+    value: function setFilterValueByType(strType, numValue) {
+      this.getFilterByType(strType).filterValue = numValue;
+    }
+  }, {
+    key: 'getFilterValueByType',
+    value: function getFilterValueByType(strType, numValue) {
+      return this.getFilterByType(strType).filterValue;
+    }
+  }, {
     key: 'doCoupling',
     value: function doCoupling() {
       var _this = this;
 
+      if (!this.objAudioSource) {
+        throw Error('com.codinginspace.audio.AudioFilters', 'Audio Source is missing, cannot couple without a source.');
+      }
       var objPreviousFilter = this.objAudioSource,
-          objCurrentFilter = this.getFilter(this.arrCouplingOrder[0]).getCore();
+          objCurrentFilter = this.getFilterObjectbyType(this.arrCouplingOrder[0]);
       this.arrCouplingOrder.forEach(function (strCurrentFilterType, numIndex) {
         var strPreviousFilterType = _this.arrCouplingOrder[numIndex - 1] || 'audiosource';
         if (strPreviousFilterType !== 'audiosource') {
-          objCurrentFilter = _this.getFilter(strCurrentFilterType).getCore();
-          objPreviousFilter = _this.getFilter(strPreviousFilterType).getCore();
+          objCurrentFilter = _this.getFilterObjectbyType(strCurrentFilterType);
+          objPreviousFilter = _this.getFilterObjectbyType(strPreviousFilterType);
         }
-        console.log('AudioFilters', 'Coupling filter ' + strPreviousFilterType + ' with ' + strCurrentFilterType);
+        console.log('com.codinginspace.audio.AudioFilters', 'Coupling filter ' + strPreviousFilterType + ' with ' + strCurrentFilterType);
         objPreviousFilter.connect(objCurrentFilter);
       });
       objCurrentFilter.connect(this.objAudioContext.destination);
-    }
-  }, {
-    key: 'getFilter',
-    value: function getFilter() {
-      var strFilterType = arguments[0] === undefined ? 'volume' : arguments[0];
-
-      return this.objFilters[strFilterType] || {
-        getValue: function getValue() {
-          console.warn('AudioFilters', 'Could not get a value for ' + strFilterType);
-          return 0;
-        },
-        setValue: function setValue(numValue) {
-          console.warn('AudioFilters', 'Could not set ' + numValue + ' for ' + strFilterType);
-        }
-      };
     }
   }]);
 
@@ -263,6 +381,64 @@ module.exports = AudioFilters;
 ;
 
 },{"./AudioFilter":3}],5:[function(require,module,exports){
+'use strict';
+
+var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (descriptor.value) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _AudioChannel = require('./AudioChannel');
+
+var AudioChannel = _interopRequire(_AudioChannel);
+
+/**
+ * @author Kenneth van der Werf
+ * @class AudioMixer
+ * @version 0.1
+ * @description Module for bundling channels and adding a crossfader
+ * @dependencies AudioChannel
+ */
+
+var AudioMixer = (function () {
+  function AudioMixer() {
+    var numChannels = arguments[0] === undefined ? 2 : arguments[0];
+
+    _classCallCheck(this, AudioMixer);
+
+    var AudioContext = window.AudioContext || window.webkitAudioContext;
+    this.objAudioContext = new AudioContext();
+    this.arrChannels = [];
+
+    this.createAudioChannels(numChannels);
+  }
+
+  _createClass(AudioMixer, [{
+    key: 'getAudioChannelById',
+    value: function getAudioChannelById(numId) {
+      return this.arrChannels[numId];
+    }
+  }, {
+    key: 'createAudioChannels',
+    value: function createAudioChannels(numChannels) {
+      for (var i = 0; i < numChannels; i++) {
+        this.createAudioChannel();
+      }
+    }
+  }, {
+    key: 'createAudioChannel',
+    value: function createAudioChannel() {
+      this.arrChannels.push(new AudioChannel(this.objAudioContext));
+    }
+  }]);
+
+  return AudioMixer;
+})();
+
+module.exports = AudioMixer;
+
+},{"./AudioChannel":2}],6:[function(require,module,exports){
 'use strict';
 
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };

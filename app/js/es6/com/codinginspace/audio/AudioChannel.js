@@ -14,41 +14,113 @@ export default class AudioChannel {
   constructor(objAudioContext, objAudioInformation = false) {
     this.objAudioContext = objAudioContext;
     this.objAudioInformation = objAudioInformation;
+    this.objAudioFilters = new AudioFilters(this.objAudioContext);
+    this.boolLoading = false;
+    this.numStartPoint = 0;
+    this.numPitch = 0;
     if (objAudioInformation) {
       this.loadAudioChannel(objAudioInformation);
     }
   }
   loadAudioChannel(objAudioInformation = this.objAudioInformation) {
     this.objAudioInformation = objAudioInformation;
+    this.boolLoading = true;
     /**
      * Download array buffer from file
      * Convert to audio buffer for audio context usage
-     * Attach as buffer to new buffer source
-     * Attach audio filters API
      */
-    console.log('AudioChannel', `Loading file ${this.objAudioInformation.audioFile}`);
+    console.log('com.codinginspace.audio.AudioChannel', `Loading file ${this.objAudioInformation.audioFile}`);
     new Loader(this.objAudioInformation.audioFile)
       .then((arrBuffer) => {
         this.objAudioContext
           .decodeAudioData(arrBuffer, (arrAudioBuffer) => {
+            this.boolLoading = false;
             this.arrAudioBuffer = arrAudioBuffer;
-            this.objAudioSource = this.objAudioContext.createBufferSource();
-            this.objAudioSource.buffer = this.arrAudioBuffer;
-            this.objAudioFilters = new AudioFilters(
-              this.objAudioContext, this.objAudioSource
-            );
-            this.objAudioFilters.doCoupling();
-            console.log('AudioChannel', 'File loaded and coupled. Audio channel is ready for usage.');
+            this.initAudioSource();
           });
       });
   }
-  setFilterValue(strFilterType, numFilterValue) {
-    if (this.objAudioFilters) {
-      let objFilter = this.objAudioFilters.getFilter(strFilterType)
-      if (objFilter) {
-        objFilter.setValue(numFilterValue);
-        return objFilter;
+  initAudioSource() {
+    /**
+     * NOTE AudioSources can only be used once
+     * To reuse after a stop we have to re-init the audioSource
+     */
+    this.objAudioSource = this.objAudioContext.createBufferSource();
+    this.objAudioSource.buffer = this.arrAudioBuffer;
+    this.objAudioFilters.objAudioSource = this.objAudioSource;
+    this.objAudioFilters.doCoupling();
+    console.log('com.codinginspace.audio.AudioChannel', 'File loaded and coupled. Audio channel is ready for usage.');
+  }
+  setFilterValueByType(strType, numValue) {
+    this.objAudioFilters.setFilterValueByType(strType, numValue);
+  }
+  getFilterValueByType(strType) {
+    return this.objAudioFilters.getFilterValueByType(strType);
+  }
+  get volumeValue () {
+    return this.getFilterValueByType('volume');
+  }
+  set volumeValue (numValue) {
+    this.setFilterValueByType('volume', numValue);
+  }
+  get gainValue () {
+    return this.getFilterValueByType('gain');
+  }
+  set gainValue (numValue) {
+    this.setFilterValueByType('gain', numValue);
+  }
+  get lowValue () {
+    return this.getFilterValueByType('low');
+  }
+  set lowValue (numValue) {
+    this.setFilterValueByType('low', numValue);
+  }
+  get midValue () {
+    return this.getFilterValueByType('mid');
+  }
+  set midValue (numValue) {
+    this.setFilterValueByType('mid', numValue);
+  }
+  get highValue () {
+    return this.getFilterValueByType('high');
+  }
+  set highValue (numValue) {
+    this.setFilterValueByType('high', numValue);
+  }
+  set pitchValue (numValue) {
+    this.numPitch = (100 + Number(numValue)) / 100;
+    if (this.objAudioSource) {
+      this.objAudioSource.playbackRate.value = this.numPitch;
+    }
+  }
+  get pitchValue () {
+    return this.numPitch;
+  }
+  playChannel (numStartPoint = this.numStartPoint) {
+    if (this.objAudioSource) {
+      if (this.boolPlaying) {
+        this.stopChannel();
       }
+      if (this.numPitch) {
+        this.pitchValue = numPitch;
+      }
+      this.objAudioSource.start(0, numStartPoint);
+      this.boolPlaying = true;
+    }
+  }
+  cueChannel() {
+    this.arrCuePoints = this.arrCuePoints || [];
+    this.arrCuePoint.push(this.objAudioSource.context.currentTime);
+  }
+  pauseChannel() {
+    this.numStartPoint = this.objAudioSource.context.currentTime;
+    this.stopChannel();
+  }
+  stopChannel () {
+    if (this.objAudioSource) {
+      this.objAudioSource.stop();
+      this.initAudioSource();
+      this.boolPlaying = false;
     }
   }
 };
