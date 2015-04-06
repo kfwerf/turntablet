@@ -1,22 +1,25 @@
 {
   "name": "Turntablet",
   "version": "0.0.1",
-  "description": "Dj Studio component, consisting of a turntable and mixer.",
-  "main": "turntablet.js",
-  "moduleType": [
-    "amd"
-  ],
+  "description": "ES6 based app that allows you to manipulate music like a dj via touch enabled turntable-like controls",
+  "main": "app/app.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kfwerf/turntablet"
+  },
   "keywords": [
     "turntablet",
-    "turntable",
-    "audio",
+    "touch",
+    "es6",
+    "babel",
     "webaudio"
   ],
-  "authors": [
-    "Kenneth van der Werf"
-  ],
-  "license": "MIT",
-  "homepage": "http://www.duskydesigns.nl",
+  "author": "Kenneth van der Werf",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kfwerf/turntablet/issues"
+  },
+  "homepage": "https://github.com/kfwerf/turntablet",
   "ignore": [
     "**/.*",
     "node_modules",

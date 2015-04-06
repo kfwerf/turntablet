@@ -1,13 +1,21 @@
-<polymer-element name="audio-slider" attributes="min, max, label">
+<polymer-element name="mixer-slider" attributes="counter">
   <template>
-    <label>{{sliderLabel}}</label>
-    <input type="range" min="{{sliderMin}}" max="{{sliderMax}}" />
+    <style>
+      mixer-slider input {
+        transform: rotateY(180deg);
+      }
+    </style>
+    <input type="range" name="slider" value="" min="-32" max="32">
   </template>
   <script>
     Polymer({
-      sliderLabel: 'Gain',
-      sliderMin: -32,
-      sliderMax> 32
+      counter: 0, // Default value
+      counterChanged: function() {
+        this.$.counterVal.classList.add('highlight');
+      },
+      increment: function() {
+        this.counter++;
+      }
     });
   </script>
 </polymer-element>

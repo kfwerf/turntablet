@@ -3,40 +3,132 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Document</title>
+	<script src="js/components/webcomponentsjs/webcomponents.min.js"></script>
+	<link rel="import" href="js/components/polymer/polymer.html">
+	<link rel="import" href="components/slider.html">
 </head>
 <body>
+	<style>
+		body {
+			margin: 0px;
+			padding: 0px;
+		}
+		.audiochannel {
+			background: url('images/ref.jpg');
+			background-size: 1024px auto;
+			width: 512px;
+			height: 768px;
+			position: relative;
+		}
+		@-webkit-keyframes spin {
+			0%   { transform: rotate(0deg); }
+			100% { transform: rotate(360deg); }
+		}
+		.platter {
+			width: 405px;
+			height: 405px;
+			overflow: hidden;
+			border-radius: 50%;
+			background: url('images/platter/background.png') no-repeat center center;
+			background-size: 100% auto;
+			position: absolute;
+			top: 25px;
+			left: 25px;
+			/*-webkit-animation: spin 1333ms linear infinite;*/
+			-webkit-animation: spin 1818ms linear infinite;
+		}
+		.platter div {
+			position: absolute;
+			top: 5.3%;
+			left: 5%;
+			height: 90%;
+			width: 90%;
+			background-repeat: no-repeat;
+			background-position: center center;
+			background-size: 100% auto;
+			border-radius: 50%;
+		}
+		.platter .overlay {
+			background-image: url('images/platter/vinyl-overlay.png');
+			mix-blend-mode: hard-light;
+		}
+		.platter .cover {
+			background-image: url('images/platter/example-cover.jpg');
+		}
+		.platter .spindle {
+			background-image: url('images/platter/spindle.png');
 
-	<section turntable-platter>
-	</section>
+		}
 
-	<section audio-channel>
-		<section audio-filters>
-			<div audio-filter-wrapper>
-				<label>Gain</label>
-				<input type="range" audio-filter audio-gain-filter min="-32" max="32" />
-			</div>
-			<div audio-filter-wrapper>
-				<label>High</label>
-				<input type="range" audio-filter audio-high-filter min="-32" max="32" />
-			</div>
-			<div audio-filter-wrapper>
-				<label>Mid</label>
-				<input type="range" audio-filter audio-mid-filter min="-32" max="32" />
-			</div>
-			<div audio-filter-wrapper>
-				<label>Low</label>
-				<input type="range" audio-filter audio-low-filter min="-32" max="32" />
-			</div>
-		</section>
-		<div audio-volume-wrapper>
-			<label>Volume</label>
-			<input type="range" audio-volume />
+		.slider-pitch {
+			position: absolute;
+			left: 435px;
+			top: 25px;
+			background: url('images/slider/slider-measure-8.png') no-repeat center center;
+			width: 64px;
+			height: 210px;
+			background-size: 100% auto;
+		}
+		.slider-pitch input {
+			-webkit-appearance: none;
+			width: 210px;
+			height: 5px;
+			background-color: #090909;
+			border-radius: 20px;
+			transform: rotate(90deg);
+			padding-left: 10px;
+			outline: 0px;
+			margin-left: -105px;
+			margin-top: 105px;
+			position: relative;
+  		left: 31px;
+		}
+		.slider-pitch input::-webkit-slider-thumb {
+			-webkit-appearance: none;
+    	background: url('images/slider/slider-knob-delicate.png');
+			background-size: 37px auto;
+			width: 37px;
+			height: 50px;
+			position: relative;
+			left: -5px;
+			transform: rotate(-90deg);
+		}
+		.play-button, .cue-button {
+			width: 64px;
+			height: 64px;
+			background: url('images/buttons/play.png') no-repeat;
+			background-size: 64px auto;
+			border: 0px;
+			outline: 0px;
+			border-radius: 50%;
+			display: block;
+			position: absolute;
+			left: 435px;
+		}
+		.cue-button {
+			background-image: url('images/buttons/cue.png');
+			top: 285px;
+		}
+		.play-button {
+			top: 375px;
+		}
+	</style>
+	<div class="audiochannel">
+		<div class="platter">
+			<div class="cover"></div>
+			<div class="overlay"></div>
+			<div class="spindle"></div>
 		</div>
-		<div audio-controls>
-			<div audio-play>Play</div>
-			<div audio-pause>Pause</div>
+
+		<div class="slider-pitch">
+			<input type="range" name="pitch" value="0" step="0.5" min="-8" max="8">
 		</div>
-	</section>
+		<button class="play-button"></button>
+		<button class="cue-button"></button>
+
+		
+	</div>
+
 
 	<script charset="utf-8" src="js/build.js"></script>
 </body>
