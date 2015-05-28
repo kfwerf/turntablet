@@ -1,0 +1,69 @@
+<polymer-element
+name="turntable-platter"
+attributes="src, playing, speed">
+  <template>
+    <style>
+      @-webkit-keyframes spin {
+        0%   { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      .platter {
+        width: 405px;
+        height: 405px;
+        overflow: hidden;
+        border-radius: 50%;
+        background: url('../images/platter/background.png') no-repeat center center;
+        background-size: 100% auto;
+        position: absolute;
+        top: 25px;
+        left: 25px;
+        {{playingSpeed()}}
+
+      }
+      .platter div {
+        position: absolute;
+        top: 5.3%;
+        left: 5%;
+        height: 90%;
+        width: 90%;
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: 100% auto;
+        border-radius: 50%;
+      }
+      .platter .overlay {
+        background-image: url('../images/platter/vinyl-overlay.png');
+        mix-blend-mode: hard-light;
+      }
+      .platter .cover {
+        /*background-image: url('../images/platter/example-cover.jpg');*/
+      }
+      .platter .spindle {
+        background-image: url('../images/platter/spindle.png');
+      }
+    </style>
+    <div class="platter">
+			<div class="cover" style="{{'background-image: url(' + src + ')'}}"></div>
+			<div class="overlay"></div>
+			<div class="spindle"></div>
+		</div>
+  </template>
+  <script>
+    Polymer({
+      src: '',
+      playing: false,
+      speed: '45',
+      playingSpeed: function() {
+        var strSpeed = this.speed === '45' ? '45' : '33';
+        var objSpeedAnimations = {
+          '45': '-webkit-animation: spin 1333ms linear infinite;',
+          '33': '-webkit-animation: spin 1818ms linear infinite;'
+        }
+        if (this.playing) {
+          return objSpeedAnimations[strSpeed];
+        }
+        return '';
+      }
+    });
+  </script>
+</polymer-element>

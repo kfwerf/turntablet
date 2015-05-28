@@ -106,6 +106,8 @@ export default class AudioChannel {
       }
       this.objAudioSource.start(0, numStartPoint);
       this.boolPlaying = true;
+    } else {
+      console.info('No audio source available for playback');
     }
   }
   cueChannel() {

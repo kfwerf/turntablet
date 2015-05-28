@@ -5,7 +5,8 @@
 	<title>Document</title>
 	<script src="js/components/webcomponentsjs/webcomponents.min.js"></script>
 	<link rel="import" href="js/components/polymer/polymer.html">
-	<link rel="import" href="components/slider.html">
+	<link rel="import" href="components/slider-input.html">
+	<link rel="import" href="components/turntable-platter.html">
 </head>
 <body>
 	<style>
@@ -18,137 +19,46 @@
 			background: #eaecf1;
 		}
 		.audiochannel {
-			background: url('images/ref.jpg');
 			background-size: 2048px auto;
+			background-size: auto 100%;
 			width: 100%;
 			height: 768px;
 			position: relative;
 		}
-		@-webkit-keyframes spin {
-			0%   { transform: rotate(0deg); }
-			100% { transform: rotate(360deg); }
-		}
-		.platter {
-			width: 405px;
-			height: 405px;
-			overflow: hidden;
-			border-radius: 50%;
-			background: url('images/platter/background.png') no-repeat center center;
-			background-size: 100% auto;
-			position: absolute;
-			top: 25px;
-			left: 25px;
-			/*-webkit-animation: spin 1333ms linear infinite;*/
-			-webkit-animation: spin 1818ms linear infinite;
-		}
-		.platter div {
-			position: absolute;
-			top: 5.3%;
-			left: 5%;
-			height: 90%;
-			width: 90%;
-			background-repeat: no-repeat;
-			background-position: center center;
-			background-size: 100% auto;
-			border-radius: 50%;
-		}
-		.platter .overlay {
-			background-image: url('images/platter/vinyl-overlay.png');
-			mix-blend-mode: hard-light;
-		}
-		.platter .cover {
-			background-image: url('images/platter/example-cover.jpg');
-		}
-		.platter .spindle {
-			background-image: url('images/platter/spindle.png');
-		}
 
-		.slider-container {
-			position: absolute;
-			top: 506px;
-			left: 20px;
-
-			width: 72px;
-		}
-
-		.slider-measurement {
-			background: url('images/slider/slider-measure-8.png') no-repeat center center;
-			background-size: auto 100%;
-			width: 64px;
-			height: 181px;
-		}
-
-		.slider-wrapper {
-			width: 5px;
-			height: 181px;
-			background: black;
-			border-radius: 20px;
-			position: relative;
-			left: 33px;
-		}
-
-		.slider-input {
-			-webkit-appearance: none;
-			background: transparent;
-			height: 5px;
-			width: 220px;
-			position: absolute;
-			transform: rotate(-90deg);
-			left: -110px;
-  		top: 90px;
-			outline: 0;
-		}
-
-		.slider-input::-webkit-slider-thumb {
-			-webkit-appearance: none;
-			background: url('images/slider/slider-knob-delicate.png');
-			background-size: 37px auto;
-			width: 37px;
-			height: 50px;
-			transform: rotate(90deg);
-		}
-
-		.slider-input:active::-webkit-slider-thumb {
-			background-position: left -50px;
-		}
-
-		.slider-label {
-			background: url('images/slider/slider-label.png');
-			background-size: 100% auto;
-			background-repeat: no-repeat;
-			width: 63px;
-			height: 30px;
-			line-height: 30px;
-			text-align: center;
+		slider-input {
 			display: block;
-			margin-top: 25px;
-			margin-left: auto;
-			margin-right: auto;
+			position: absolute;
 		}
 
-		.pitch-filter {
+		slider-input[name="pitch"] {
 			left: 435px;
 			top: 25px;
 		}
 
-		.pitch-filter, .pitch-filter .slider-measurement, .pitch-filter .slider-wrapper {
-			height: 210px;
+		slider-input[name="low"] {
+			top: 506px;
+			left: 20px;
 		}
 
-		.pitch-filter .slider-input {
-			left: -120px;
-  		top: 105px;
-			width: 240px;
-		}
-
-		.mid-filter {
+		slider-input[name="mid"] {
+			top: 506px;
 			left: 108px;
 		}
-		.high-filter {
+
+		slider-input[name="high"] {
+			top: 506px;
 			left: 196px;
 		}
-		.gain-filter {
+
+		slider-input[name="gain"] {
+			top: 506px;
 			left: 284px;
+		}
+
+		slider-input[name="volume"] {
+			top: 506px;
+			left: 416px;
 		}
 
 		.play-button, .cue-button {
@@ -180,66 +90,36 @@
 			background-position: left -192px;
 		}
 
+		.song {
+			background: url('images/label.png');
+			background-size: 257px auto;
+			width: 257px;
+			height: 29px;
+			line-height: 31px;
+			text-align: center;
+			display: block;
+			position: absolute;
+			top: 455px;
+			left: 100px;
+		}
+
 	</style>
 	<div class="audiochannel">
-		<div class="platter">
-			<div class="cover"></div>
-			<div class="overlay"></div>
-			<div class="spindle"></div>
-		</div>
 
-		<div class="slider-container pitch-filter">
-			<div class="slider-measurement">
-				<div class="slider-filter slider-wrapper">
-					<input type="range" name="pitch-filter" value="0" step="0.5" min="-8" max="8" class="slider-input">
-				</div>
-			</div>
-		</div>
+		<turntable-platter src="./images/platter/example-cover.jpg"></turntable-platter>
+
+		<label for="song" class="song">Daft Punk - Get Lucky (Original Mix)</label>
 
 		<button class="play-button active"></button>
 		<button class="cue-button"></button>
 
-		<div class="slider-container low-filter">
-			<div class="slider-measurement">
-				<div class="slider-filter slider-wrapper">
-					<input type="range" name="low-filter" value="0" step="0.5" min="-8" max="8" class="slider-input">
-				</div>
-			</div>
-			<label for="low-filter" class="slider-label">Low</label>
-		</div>
+		<slider-input type="small" value="0" name="pitch" min="-8" max="8" step="0.5"></slider-input>
+		<slider-input type="small" name="low" min="-8" max="8" step="0.5" label="Low"></slider-input>
+		<slider-input type="small" name="mid" min="-8" max="8" step="0.5" label="Mid"></slider-input>
+		<slider-input type="small" name="high" min="-8" max="8" step="0.5" label="High"></slider-input>
+		<slider-input type="small" name="gain" min="-8" max="8" step="0.5" label="Gain"></slider-input>
 
-		<div class="slider-container mid-filter">
-			<div class="slider-measurement">
-				<div class="slider-filter slider-wrapper">
-					<input type="range" name="mid-filter" value="0" step="0.5" min="-8" max="8" class="slider-input">
-				</div>
-			</div>
-			<label for="mid-filter" class="slider-label">Mid</label>
-		</div>
-
-		<div class="slider-container high-filter">
-			<div class="slider-measurement">
-				<div class="slider-filter slider-wrapper">
-					<input type="range" name="high-filter" value="0" step="0.5" min="-8" max="8" class="slider-input">
-				</div>
-			</div>
-			<label for="high-filter" class="slider-label">High</label>
-		</div>
-
-		<div class="slider-container gain-filter">
-			<div class="slider-measurement">
-				<div class="slider-filter slider-wrapper">
-					<input type="range" name="gain-filter" value="0" step="0.5" min="-8" max="8" class="slider-input">
-				</div>
-			</div>
-			<label for="gain-filter" class="slider-label">Gain</label>
-		</div>
-
-
-		<div class="slider-volume">
-			<input type="range" name="volume" value="0" step="0.5" min="-8" max="8">
-		</div>
-
+		<slider-input type="big" name="volume" label="Volume"></slider-input>
 
 	</div>
 

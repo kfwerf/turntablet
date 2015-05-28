@@ -12,11 +12,28 @@ var objCurrentContext = new AudioContext();
 
 var objAudioMixer = new AudioMixer();
 
-objAudioMixer.getAudioChannelById(0).loadAudioChannel({
-  audioFile: 'audio/demo.mp3'
-});
+var audioChannel = document.querySelector('.audiochannel');
+var numChannel = 0;
 
-window.objAudioMixer = objAudioMixer;
+var objAudioChannel = {
+  audioChannel: audioChannel,
+  turntablePlatter: audioChannel.querySelector('turntable-platter'),
+  songLabel: audioChannel.querySelector('.song'),
+  playButton: audioChannel.querySelector('.play-button'),
+  cueButton: audioChannel.querySelector('.cue-button'),
+  pitchSlider: audioChannel.querySelector('slider-input[name="pitch"]'),
+  lowSlider: audioChannel.querySelector('slider-input[name="low"]'),
+  midSlider: audioChannel.querySelector('slider-input[name="mid"]'),
+  highSlider: audioChannel.querySelector('slider-input[name="high"]'),
+  gainSlider: audioChannel.querySelector('slider-input[name="gain"]'),
+  volumeSlider: audioChannel.querySelector('slider-input[name="volume"]')
+};
+
+var onClick = function onClick() {
+  objAudioMixer.getAudioChannelById(numChannel).playChannel();
+};
+
+objAudioChannel.playButton.addEventListener('click', onClick);
 
 },{"./com/codinginspace/audio/AudioMixer":5}],2:[function(require,module,exports){
 'use strict';
@@ -170,6 +187,8 @@ var AudioChannel = (function () {
         }
         this.objAudioSource.start(0, numStartPoint);
         this.boolPlaying = true;
+      } else {
+        console.info('No audio source available for playback');
       }
     }
   }, {
