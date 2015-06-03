@@ -1,56 +1,133 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _AudioMixer = require('./com/codinginspace/audio/AudioMixer');
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var AudioMixer = _interopRequire(_AudioMixer);
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-var AudioContext = window.AudioContext || window.webkitAudioContext;
-var objCurrentContext = new AudioContext();
+var _comCodinginspaceAudioAudioMixer = require('./com/codinginspace/audio/AudioMixer');
 
-var objAudioMixer = new AudioMixer();
+var _comCodinginspaceAudioAudioMixer2 = _interopRequireDefault(_comCodinginspaceAudioAudioMixer);
 
-var audioChannel = document.querySelector('.audiochannel');
-var numChannel = 0;
+/**
+ * @author Kenneth van der Werf
+ * @class AudioMixerViewChannel
+ * @version 0.1
+ * @description Bridge between turntable GUI and web audio mixer
+ * @dependencies AudioMixerViewController, AudioMixer
+ */
 
-var objAudioChannel = {
-  audioChannel: audioChannel,
-  turntablePlatter: audioChannel.querySelector('turntable-platter'),
-  songLabel: audioChannel.querySelector('.song'),
-  playButton: audioChannel.querySelector('.play-button'),
-  cueButton: audioChannel.querySelector('.cue-button'),
-  pitchSlider: audioChannel.querySelector('slider-input[name="pitch"]'),
-  lowSlider: audioChannel.querySelector('slider-input[name="low"]'),
-  midSlider: audioChannel.querySelector('slider-input[name="mid"]'),
-  highSlider: audioChannel.querySelector('slider-input[name="high"]'),
-  gainSlider: audioChannel.querySelector('slider-input[name="gain"]'),
-  volumeSlider: audioChannel.querySelector('slider-input[name="volume"]')
-};
+var AudioMixerViewChannel = (function () {
+  /**
+   * @param {Object} objAudioMixerModel Audio mixer that connects to web audio
+   * @param {Object} objAudioContext Audio context instantiated for web audio
+   * @param {Number} numChannel The channel number that we use for the model
+   * @param {String} strClass The CSS class that refers to the parent element
+   */
 
-var onClick = function onClick() {
-  objAudioMixer.getAudioChannelById(numChannel).playChannel();
-};
+  function AudioMixerViewChannel(objAudioMixerModel, objAudioContext, numChannel, strClass) {
+    _classCallCheck(this, AudioMixerViewChannel);
 
-objAudioChannel.playButton.addEventListener('click', onClick);
+    this.objAudioMixerModel = objAudioMixerModel;
+    this.objAudioContext = objAudioContext;
+    this.numChannel = numChannel;
+
+    this.doGuiElementBinding(strClass);
+    this.doGuiEventBinding();
+  }
+
+  _createClass(AudioMixerViewChannel, [{
+    key: 'doGuiElementBinding',
+    value: function doGuiElementBinding(strClass) {
+      var audioChannel = document.querySelector(strClass);
+      this.objGui = {
+        audioChannel: audioChannel,
+        turntablePlatter: audioChannel.querySelector('turntable-platter'),
+        songLabel: audioChannel.querySelector('.song'),
+        playButton: audioChannel.querySelector('.play-button'),
+        cueButton: audioChannel.querySelector('.cue-button'),
+        pitchSlider: audioChannel.querySelector('slider-input[name="pitch"]'),
+        lowSlider: audioChannel.querySelector('slider-input[name="low"]'),
+        midSlider: audioChannel.querySelector('slider-input[name="mid"]'),
+        highSlider: audioChannel.querySelector('slider-input[name="high"]'),
+        gainSlider: audioChannel.querySelector('slider-input[name="gain"]'),
+        volumeSlider: audioChannel.querySelector('slider-input[name="volume"]')
+      };
+    }
+  }, {
+    key: 'doGuiEventUnbinding',
+    value: function doGuiEventUnbinding() {
+      this.objGui.playButton.removeEventListener('click', this.doPlay);
+    }
+  }, {
+    key: 'doGuiEventBinding',
+    value: function doGuiEventBinding() {
+      this.doGuiEventUnbinding();
+      this.objGui.playButton.addEventListener('click', this.doPlay.bind(this));
+    }
+  }, {
+    key: 'doPlay',
+    value: function doPlay() {
+      this.objAudioMixerModel.getAudioChannelById(this.numChannel).playChannel();
+    }
+  }]);
+
+  return AudioMixerViewChannel;
+})();
+
+/**
+ * @author Kenneth van der Werf
+ * @class AudioMixerViewController
+ * @version 0.1
+ * @description Bridge between model and user interface
+ * @dependencies AudioMixer
+ */
+
+var AudioMixerViewController = (function () {
+  function AudioMixerViewController() {
+    _classCallCheck(this, AudioMixerViewController);
+
+    this.objAudioMixerModel = new _comCodinginspaceAudioAudioMixer2['default']();
+    this.objAudioContext = new this.audioContext();
+
+    var channelOne = new AudioMixerViewChannel(this.objAudioMixerModel, this.objAudioContext, 0, '.audiochannel');
+    window.channel = channelOne;
+  }
+
+  _createClass(AudioMixerViewController, [{
+    key: 'audioContext',
+    get: function () {
+      return window.AudioContext || window.webkitAudioContext;
+    }
+  }]);
+
+  return AudioMixerViewController;
+})();
+
+var objAudioMixerViewController = new AudioMixerViewController();
 
 },{"./com/codinginspace/audio/AudioMixer":5}],2:[function(require,module,exports){
 'use strict';
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
 
-var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (descriptor.value) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _Loader = require('../utils/Loader');
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-var Loader = _interopRequire(_Loader);
+var _utilsLoader = require('../utils/Loader');
+
+var _utilsLoader2 = _interopRequireDefault(_utilsLoader);
 
 var _AudioFilters = require('./AudioFilters');
 
-var AudioFilters = _interopRequire(_AudioFilters);
+var _AudioFilters2 = _interopRequireDefault(_AudioFilters);
 
 /**
  * @author Kenneth van der Werf
@@ -68,7 +145,7 @@ var AudioChannel = (function () {
 
     this.objAudioContext = objAudioContext;
     this.objAudioInformation = objAudioInformation;
-    this.objAudioFilters = new AudioFilters(this.objAudioContext);
+    this.objAudioFilters = new _AudioFilters2['default'](this.objAudioContext);
     this.boolLoading = false;
     this.numStartPoint = 0;
     this.numPitch = 0;
@@ -91,7 +168,7 @@ var AudioChannel = (function () {
        * Convert to audio buffer for audio context usage
        */
       console.log('com.codinginspace.audio.AudioChannel', 'Loading file ' + this.objAudioInformation.audioFile);
-      new Loader(this.objAudioInformation.audioFile).then(function (arrBuffer) {
+      new _utilsLoader2['default'](this.objAudioInformation.audioFile).then(function (arrBuffer) {
         _this.objAudioContext.decodeAudioData(arrBuffer, function (arrAudioBuffer) {
           _this.boolLoading = false;
           _this.arrAudioBuffer = arrAudioBuffer;
@@ -217,15 +294,20 @@ var AudioChannel = (function () {
   return AudioChannel;
 })();
 
-module.exports = AudioChannel;
+exports['default'] = AudioChannel;
 ;
+module.exports = exports['default'];
 
 },{"../utils/Loader":6,"./AudioFilters":4}],3:[function(require,module,exports){
 'use strict';
 
-var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (descriptor.value) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 /**
  * @author Kenneth van der Werf
@@ -301,20 +383,25 @@ var AudioFilter = (function () {
   return AudioFilter;
 })();
 
-module.exports = AudioFilter;
+exports['default'] = AudioFilter;
+module.exports = exports['default'];
 
 },{}],4:[function(require,module,exports){
 'use strict';
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
 
-var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (descriptor.value) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 var _AudioFilter = require('./AudioFilter');
 
-var AudioFilter = _interopRequire(_AudioFilter);
+var _AudioFilter2 = _interopRequireDefault(_AudioFilter);
 
 /**
  * @author Kenneth van der Werf
@@ -341,11 +428,11 @@ var AudioFilters = (function () {
       high: 0
     };
     this.objFilters = {
-      volume: new AudioFilter(this.objAudioContext, 'volume', this.objFilterValues.volume),
-      gain: new AudioFilter(this.objAudioContext, 'gain', this.objFilterValues.gain),
-      low: new AudioFilter(this.objAudioContext, 'low', this.objFilterValues.low),
-      mid: new AudioFilter(this.objAudioContext, 'mid', this.objFilterValues.mid),
-      high: new AudioFilter(this.objAudioContext, 'high', this.objFilterValues.high)
+      volume: new _AudioFilter2['default'](this.objAudioContext, 'volume', this.objFilterValues.volume),
+      gain: new _AudioFilter2['default'](this.objAudioContext, 'gain', this.objFilterValues.gain),
+      low: new _AudioFilter2['default'](this.objAudioContext, 'low', this.objFilterValues.low),
+      mid: new _AudioFilter2['default'](this.objAudioContext, 'mid', this.objFilterValues.mid),
+      high: new _AudioFilter2['default'](this.objAudioContext, 'high', this.objFilterValues.high)
     };
     this.arrCouplingOrder = ['volume', 'gain', 'low', 'mid', 'high'];
   }
@@ -396,21 +483,26 @@ var AudioFilters = (function () {
   return AudioFilters;
 })();
 
-module.exports = AudioFilters;
+exports['default'] = AudioFilters;
 ;
+module.exports = exports['default'];
 
 },{"./AudioFilter":3}],5:[function(require,module,exports){
 'use strict';
 
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj['default'] : obj; };
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
 
-var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (descriptor.value) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 var _AudioChannel = require('./AudioChannel');
 
-var AudioChannel = _interopRequire(_AudioChannel);
+var _AudioChannel2 = _interopRequireDefault(_AudioChannel);
 
 /**
  * @author Kenneth van der Werf
@@ -448,19 +540,24 @@ var AudioMixer = (function () {
   }, {
     key: 'createAudioChannel',
     value: function createAudioChannel() {
-      this.arrChannels.push(new AudioChannel(this.objAudioContext));
+      this.arrChannels.push(new _AudioChannel2['default'](this.objAudioContext));
     }
   }]);
 
   return AudioMixer;
 })();
 
-module.exports = AudioMixer;
+exports['default'] = AudioMixer;
+module.exports = exports['default'];
 
 },{"./AudioChannel":2}],6:[function(require,module,exports){
 'use strict';
 
-var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 /**
  * @author Kenneth van der Werf
@@ -493,8 +590,9 @@ var Loader = function Loader(strFile) {
   });
 };
 
-module.exports = Loader;
+exports['default'] = Loader;
 ;
+module.exports = exports['default'];
 
 },{}]},{},[1])
 
