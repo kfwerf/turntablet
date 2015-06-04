@@ -1,78 +1,129 @@
 <!DOCTYPE html>
-<html class="no-js">
-    <head>
-        
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Web audio - Turntables experiment</title>
-        
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="js/components/webcomponentsjs/webcomponents.min.js"></script>
+	<link rel="import" href="js/components/polymer/polymer.html">
+	<link rel="import" href="components/slider-input.html">
+	<link rel="import" href="components/turntable-platter.html">
+</head>
+<body>
+	<style>
+		body {
+			margin: 0px;
+			padding: 0px;
+			font-family: 'Myriad Pro', Helvetica, Arial;
+			font-size: 12px;
+			color: #626367;
+			background: #eaecf1;
+		}
+		.audiochannel {
+			background-size: 2048px auto;
+			background-size: auto 100%;
+			width: 100%;
+			height: 768px;
+			position: relative;
+		}
 
-        <!-- Place favicon.ico and apple-touch-icon(s) in the root directory -->
-        <link rel="stylesheet" href="css/app.css">
-        <script src="js/vendor/modernzr.js"></script>
-    
-    </head>
-    <body>
-        <!--[if lt IE 8]>
-            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
+		slider-input {
+			display: block;
+			position: absolute;
+		}
+
+		slider-input[name="pitch"] {
+			left: 435px;
+			top: 25px;
+		}
+
+		slider-input[name="low"] {
+			top: 506px;
+			left: 20px;
+		}
+
+		slider-input[name="mid"] {
+			top: 506px;
+			left: 108px;
+		}
+
+		slider-input[name="high"] {
+			top: 506px;
+			left: 196px;
+		}
+
+		slider-input[name="gain"] {
+			top: 506px;
+			left: 284px;
+		}
+
+		slider-input[name="volume"] {
+			top: 506px;
+			left: 416px;
+		}
+
+		.play-button, .cue-button {
+			width: 64px;
+			height: 64px;
+			background: url('images/buttons/play.png') no-repeat;
+			background-size: 64px auto;
+			border: 0px;
+			outline: 0px;
+			border-radius: 50%;
+			display: block;
+			position: absolute;
+			left: 435px;
+		}
+		.cue-button:active, .play-button:active {
+			background-position: left -64px;
+		}
+		.cue-button {
+			background-image: url('images/buttons/cue.png');
+			top: 285px;
+		}
+		.play-button {
+			top: 375px;
+		}
+		.play-button.active, .cue-button.active {
+			background-position: left -128px;
+		}
+		.play-button.active:active, .cue-button.active:active {
+			background-position: left -192px;
+		}
+
+		.song {
+			background: url('images/label.png');
+			background-size: 257px auto;
+			width: 257px;
+			height: 29px;
+			line-height: 31px;
+			text-align: center;
+			display: block;
+			position: absolute;
+			top: 455px;
+			left: 100px;
+		}
+
+	</style>
+	<div class="audiochannel">
+
+		<turntable-platter src="./images/platter/example-cover.jpg"></turntable-platter>
+
+		<label for="song" class="song">Daft Punk - Get Lucky (Original Mix)</label>
+
+		<button class="play-button active"></button>
+		<button class="cue-button"></button>
+
+		<slider-input type="small" value="0" name="pitch" min="-8" max="8" step="0.5"></slider-input>
+		<slider-input type="small" name="low" min="-8" max="8" step="0.5" label="Low"></slider-input>
+		<slider-input type="small" name="mid" min="-8" max="8" step="0.5" label="Mid"></slider-input>
+		<slider-input type="small" name="high" min="-8" max="8" step="0.5" label="High"></slider-input>
+		<slider-input type="small" name="gain" min="-8" max="8" step="0.5" label="Gain"></slider-input>
+
+		<slider-input type="big" name="volume" label="Volume"></slider-input>
+
+	</div>
 
 
-        <main class="mainContent" role="main">
-            
-            <div class="turntable">
-                <div class="platter-disc" data-spinning="false">
-                    <div class="platter-spindle"></div>
-                </div>
-
-                <div class="rpm-buttons">
-                    <div class="rpm-thirtythree" data-rpm="33" data-rpm-active="true">33</div>
-                     / 
-                    <div class="rpm-fourtyfive" data-rpm="45" data-rpm-active="false">45</div>
-                </div>
-
-                <div class="power-button" data-power="false">Power</div>
-                
-                <div class="startstop-button" data-startstop="false">Start/Stop</div>
-
-                <div class="pitch-fader">
-                    Pitch:
-                    <input class="pitch-handle" data-pitch="0" data-pitchrange="16" type ="range" min ="-100" max="100" step ="1" value ="0"/>
-                </div>
-            </div>
-            
-            <div class="mixer">
-                <div class="channel">
-                    <div class="high-knob">
-                        High:
-                       <input type="range" class="high-handle" type ="range" min ="0" max="100" step ="1" value ="0"> 
-                    </div>
-                    <div class="mid-knob">
-                        Mid:
-                        <input type="range" class="mid-handle" type ="range" min ="0" max="100" step ="1" value ="0"> 
-                    </div>
-                    <div class="low-knob">
-                        Low:
-                        <input type="range" class="low-handle" type ="range" min ="0" max="100" step ="1" value ="0"> 
-                    </div>
-                    <div class="volume-fader">
-                        Volume:
-                        <input type="range" class="volume-handle" type ="range" min ="0" max="100" step ="1" value ="0"> 
-                    </div>
-                </div>
-                <div class="channel">
-                    
-                </div>
-                <div class="cross-fader">
-                    Cross-fader:
-                    <input type="range" class="cross-handle" data-cross="0" type ="range" min ="-100" max="100" step ="1" value ="0">
-                </div>
-            </div>
-
-        </main>
-        
-        <script data-main="js/app" src="js/vendor/require.js"></script>
-    </body>
+	<script charset="utf-8" src="js/build.js"></script>
+</body>
 </html>

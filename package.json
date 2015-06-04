@@ -1,0 +1,35 @@
+{
+  "name": "Turntablet",
+  "version": "0.0.1",
+  "description": "ES6 based app that allows you to manipulate music like a dj via touch enabled turntable-like controls",
+  "main": "app/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kfwerf/turntablet"
+  },
+  "keywords": [
+    "turntablet",
+    "touch",
+    "es6",
+    "babel",
+    "webaudio"
+  ],
+  "author": "Kenneth van der Werf",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kfwerf/turntablet/issues"
+  },
+  "homepage": "https://github.com/kfwerf/turntablet",
+  "devDependencies": {
+    "babelify": "^6.0.1",
+    "browserify": "^9.0.6",
+    "gulp": "^3.8.11",
+    "gulp-sourcemaps": "^1.5.1",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.1.0"
+  }
+}

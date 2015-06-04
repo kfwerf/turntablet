@@ -1,0 +1,21 @@
+<polymer-element name="mixer-slider" attributes="counter">
+  <template>
+    <style>
+      mixer-slider input {
+        transform: rotateY(180deg);
+      }
+    </style>
+    <input type="range" name="slider" value="" min="-32" max="32">
+  </template>
+  <script>
+    Polymer({
+      counter: 0, // Default value
+      counterChanged: function() {
+        this.$.counterVal.classList.add('highlight');
+      },
+      increment: function() {
+        this.counter++;
+      }
+    });
+  </script>
+</polymer-element>
