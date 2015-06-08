@@ -29,6 +29,7 @@
   ],
   "dependencies": {
     "requirejs": "~2.1.15",
-    "polymer": "~0.5.2"
+    "polymer": "~0.5.2",
+    "id3": "~1.0.2"
   }
 }

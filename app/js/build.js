@@ -68,6 +68,13 @@ var AudioMixerViewChannel = (function () {
       this.objGui.playButton.addEventListener('click', this.doPlay.bind(this));
     }
   }, {
+    key: 'doLoadAudio',
+    value: function doLoadAudio() {
+      var strAudioFile = arguments[0] === undefined ? '' : arguments[0];
+
+      if (strAudioFile) {}
+    }
+  }, {
     key: 'doPlay',
     value: function doPlay() {
       this.objAudioMixerModel.getAudioChannelById(this.numChannel).playChannel();

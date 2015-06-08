@@ -7,6 +7,7 @@
 	<link rel="import" href="js/components/polymer/polymer.html">
 	<link rel="import" href="components/slider-input.html">
 	<link rel="import" href="components/turntable-platter.html">
+	<link rel="import" href="components/audio-input.html">
 </head>
 <body>
 	<style>
@@ -61,6 +62,12 @@
 			left: 416px;
 		}
 
+		audio-input[type="song"] {
+			position: absolute;
+			top: 455px;
+			left: 100px;
+		}
+
 		.play-button, .cue-button {
 			width: 64px;
 			height: 64px;
@@ -90,25 +97,14 @@
 			background-position: left -192px;
 		}
 
-		.song {
-			background: url('images/label.png');
-			background-size: 257px auto;
-			width: 257px;
-			height: 29px;
-			line-height: 31px;
-			text-align: center;
-			display: block;
-			position: absolute;
-			top: 455px;
-			left: 100px;
-		}
+
 
 	</style>
 	<div class="audiochannel">
 
 		<turntable-platter src="./images/platter/example-cover.jpg"></turntable-platter>
 
-		<label for="song" class="song">Daft Punk - Get Lucky (Original Mix)</label>
+		<audio-input type="song"></audio-input>
 
 		<button class="play-button active"></button>
 		<button class="cue-button"></button>

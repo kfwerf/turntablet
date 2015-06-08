@@ -49,6 +49,12 @@ class AudioMixerViewChannel {
     this.objGui.playButton
       .addEventListener('click', this.doPlay.bind(this));
   }
+  doLoadAudio(strAudioFile = '') {
+    if (strAudioFile) {
+      
+
+    }
+  }
   doPlay() {
     this.objAudioMixerModel
       .getAudioChannelById(this.numChannel)

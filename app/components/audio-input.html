@@ -1,0 +1,88 @@
+<polymer-element
+name="audio-input"
+attributes="name">
+  <template>
+    <style>
+      .audio-label {
+        background: url('../images/label.png');
+        background-size: 257px auto;
+        width: 257px;
+        height: 29px;
+        line-height: 31px;
+        display: block;
+        position: relative;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        /*position: absolute;
+        top: 455px;
+        left: 100px;*/
+      }
+      .audio-label::before, .song::after {
+        content: '';
+        position: absolute;
+        right: 15px;
+        top: 6px;
+      }
+      .audio-label::before {
+        top: 16px;
+        border-bottom: 2px solid #121212;
+        width: 8px;
+        right: 15px;
+      }
+      .audio-label::after {
+        border: solid transparent;
+      	height: 0;
+      	width: 0;
+      	position: absolute;
+      	border-color: rgba(18, 18, 18, 0);
+      	border-bottom-color: #121212;
+      	border-width: 4px;
+      	margin-left: -4px;
+      }
+      .audio-label span {
+        padding-left: 15px;
+      }
+      .file-loaded .file-empty,
+      .file-notloaded .file-found {
+        display: none;
+      }
+      .audio-label input {
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        border: 0;
+        opacity: 0;
+      }
+    </style>
+    <label for="{{type}}" class="{{type}} {{nofile}} audio-label">
+      <span class="file-empty">No {{type}} selected. Click here to load one.</span>
+      <span class="file-found">{{name}}</span>
+      <input
+      type="file"
+      id="input"
+      accept="{{accept}}">
+    </label>
+  </template>
+  <script>
+    Polymer({
+      type: 'file',
+      name: '',
+      nofile: 'file-notloaded',
+      accept: 'audio/mpeg',
+      ready: function() {
+        var elInput = this.shadowRoot.querySelector('input');
+        var onFileChange = function () {
+          var arrFiles = elInput.files || [];
+          var objFirst = arrFiles[0] || {};
+          console.debug(arrFiles, objFirst, this);
+          this.name = objFirst.name;
+          this.nofile = 'file-loaded';
+        };
+        elInput.addEventListener('change', onFileChange.bind(this));
+      }
+    });
+  </script>
+</polymer-element>
