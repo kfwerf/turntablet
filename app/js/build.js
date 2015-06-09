@@ -39,13 +39,18 @@ var AudioMixerViewChannel = (function () {
   }
 
   _createClass(AudioMixerViewChannel, [{
+    key: 'objAudioChannelModel',
+    get: function () {
+      return this.objAudioMixerModel.getAudioChannelById(this.numChannel);
+    }
+  }, {
     key: 'doGuiElementBinding',
     value: function doGuiElementBinding(strClass) {
       var audioChannel = document.querySelector(strClass);
       this.objGui = {
         audioChannel: audioChannel,
         turntablePlatter: audioChannel.querySelector('turntable-platter'),
-        songLabel: audioChannel.querySelector('.song'),
+        songLabel: audioChannel.querySelector('audio-input[type="song"]'),
         playButton: audioChannel.querySelector('.play-button'),
         cueButton: audioChannel.querySelector('.cue-button'),
         pitchSlider: audioChannel.querySelector('slider-input[name="pitch"]'),
@@ -59,6 +64,19 @@ var AudioMixerViewChannel = (function () {
   }, {
     key: 'doGuiEventUnbinding',
     value: function doGuiEventUnbinding() {
+      var _this = this;
+
+      Object.observe(this.objGui.songLabel, function (arrUpdates) {
+        arrUpdates.forEach(function (objUpdated) {
+          switch (objUpdated.name) {
+            case 'file':
+              _this.doLoadAudioFromFile({
+                audioFile: objUpdated.object.file
+              });
+              break;
+          }
+        });
+      });
       this.objGui.playButton.removeEventListener('click', this.doPlay);
     }
   }, {
@@ -68,16 +86,14 @@ var AudioMixerViewChannel = (function () {
       this.objGui.playButton.addEventListener('click', this.doPlay.bind(this));
     }
   }, {
-    key: 'doLoadAudio',
-    value: function doLoadAudio() {
-      var strAudioFile = arguments[0] === undefined ? '' : arguments[0];
-
-      if (strAudioFile) {}
+    key: 'doLoadAudioFromFile',
+    value: function doLoadAudioFromFile(objFile) {
+      this.objAudioChannelModel.loadAudioChannelFromFile(objFile);
     }
   }, {
     key: 'doPlay',
     value: function doPlay() {
-      this.objAudioMixerModel.getAudioChannelById(this.numChannel).playChannel();
+      this.objAudioChannelModel.playChannel();
     }
   }]);
 
@@ -162,8 +178,8 @@ var AudioChannel = (function () {
   }
 
   _createClass(AudioChannel, [{
-    key: 'loadAudioChannel',
-    value: function loadAudioChannel() {
+    key: 'loadAudioChannelFromXhr',
+    value: function loadAudioChannelFromXhr() {
       var _this = this;
 
       var objAudioInformation = arguments[0] === undefined ? this.objAudioInformation : arguments[0];
@@ -174,7 +190,7 @@ var AudioChannel = (function () {
        * Download array buffer from file
        * Convert to audio buffer for audio context usage
        */
-      console.log('com.codinginspace.audio.AudioChannel', 'Loading file ' + this.objAudioInformation.audioFile);
+      console.log('com.codinginspace.audio.AudioChannel', 'Loading XHR ' + this.objAudioInformation.audioFile);
       new _utilsLoader2['default'](this.objAudioInformation.audioFile).then(function (arrBuffer) {
         _this.objAudioContext.decodeAudioData(arrBuffer, function (arrAudioBuffer) {
           _this.boolLoading = false;
@@ -182,6 +198,31 @@ var AudioChannel = (function () {
           _this.initAudioSource();
         });
       });
+    }
+  }, {
+    key: 'loadAudioChannelFromFile',
+    value: function loadAudioChannelFromFile() {
+      var objAudioInformation = arguments[0] === undefined ? this.objAudioInformation : arguments[0];
+
+      this.objAudioInformation = objAudioInformation;
+      this.boolLoading = true;
+      /**
+       * Use reader to create array buffer
+       * Should be loaded via File API e.g input[type="file"]
+       * Process file into reader for array buffer result
+       */
+      console.log('com.codinginspace.audio.AudioChannel', 'Loading File ' + this.objAudioInformation.audioFile.name);
+      var reader = new FileReader();
+      reader.readAsArrayBuffer(this.objAudioInformation.audioFile);
+      reader.onload = (function () {
+        var _this2 = this;
+
+        this.objAudioContext.decodeAudioData(reader.result, function (arrAudioBuffer) {
+          _this2.boolLoading = false;
+          _this2.arrAudioBuffer = arrAudioBuffer;
+          _this2.initAudioSource();
+        });
+      }).bind(this);
     }
   }, {
     key: 'initAudioSource',

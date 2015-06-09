@@ -24,12 +24,16 @@ class AudioMixerViewChannel {
     this.doGuiElementBinding(strClass);
     this.doGuiEventBinding();
   }
+  get objAudioChannelModel() {
+    return this.objAudioMixerModel
+      .getAudioChannelById(this.numChannel);
+  }
   doGuiElementBinding(strClass) {
     let audioChannel = document.querySelector(strClass);
     this.objGui = {
       audioChannel: audioChannel,
       turntablePlatter: audioChannel.querySelector('turntable-platter'),
-      songLabel: audioChannel.querySelector('.song'),
+      songLabel: audioChannel.querySelector('audio-input[type="song"]'),
       playButton: audioChannel.querySelector('.play-button'),
       cueButton: audioChannel.querySelector('.cue-button'),
       pitchSlider: audioChannel.querySelector('slider-input[name="pitch"]'),
@@ -41,6 +45,17 @@ class AudioMixerViewChannel {
     };
   }
   doGuiEventUnbinding() {
+    Object.observe(this.objGui.songLabel, (arrUpdates) => {
+      arrUpdates.forEach((objUpdated) => {
+        switch (objUpdated.name) {
+        case 'file':
+          this.doLoadAudioFromFile({
+            audioFile: objUpdated.object.file
+          });
+        break;
+        }
+      });
+    });
     this.objGui.playButton
       .removeEventListener('click', this.doPlay);
   }
@@ -49,16 +64,11 @@ class AudioMixerViewChannel {
     this.objGui.playButton
       .addEventListener('click', this.doPlay.bind(this));
   }
-  doLoadAudio(strAudioFile = '') {
-    if (strAudioFile) {
-      
-
-    }
+  doLoadAudioFromFile(objFile) {
+    this.objAudioChannelModel.loadAudioChannelFromFile(objFile);
   }
   doPlay() {
-    this.objAudioMixerModel
-      .getAudioChannelById(this.numChannel)
-      .playChannel();
+    this.objAudioChannelModel.playChannel();
   }
 }
 

@@ -1,6 +1,6 @@
 <polymer-element
 name="audio-input"
-attributes="name">
+attributes="type, name, accept, file, tags">
   <template>
     <style>
       .audio-label {
@@ -17,19 +17,19 @@ attributes="name">
         top: 455px;
         left: 100px;*/
       }
-      .audio-label::before, .song::after {
+      .audio-label::before, .audio-label::after {
         content: '';
         position: absolute;
         right: 15px;
         top: 6px;
       }
-      .audio-label::before {
+      .audio-label.file-notloaded::before {
         top: 16px;
         border-bottom: 2px solid #121212;
         width: 8px;
         right: 15px;
       }
-      .audio-label::after {
+      .audio-label.file-notloaded::after {
         border: solid transparent;
       	height: 0;
       	width: 0;
@@ -72,14 +72,20 @@ attributes="name">
       name: '',
       nofile: 'file-notloaded',
       accept: 'audio/mpeg',
+      file: {},
+      tags: {},
       ready: function() {
         var elInput = this.shadowRoot.querySelector('input');
         var onFileChange = function () {
           var arrFiles = elInput.files || [];
-          var objFirst = arrFiles[0] || {};
-          console.debug(arrFiles, objFirst, this);
-          this.name = objFirst.name;
-          this.nofile = 'file-loaded';
+          this.file = arrFiles[0] || {};
+          this.name = this.file.name;
+
+          id3(this.file, function(err, tags) {
+            this.nofile = 'file-loaded';
+            this.name = tags.artist + ' - ' + tags.title;
+        		this.tags = tags;
+        	}.bind(this));
         };
         elInput.addEventListener('change', onFileChange.bind(this));
       }

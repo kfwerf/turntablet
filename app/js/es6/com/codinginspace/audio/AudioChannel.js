@@ -22,14 +22,14 @@ export default class AudioChannel {
       this.loadAudioChannel(objAudioInformation);
     }
   }
-  loadAudioChannel(objAudioInformation = this.objAudioInformation) {
+  loadAudioChannelFromXhr(objAudioInformation = this.objAudioInformation) {
     this.objAudioInformation = objAudioInformation;
     this.boolLoading = true;
     /**
      * Download array buffer from file
      * Convert to audio buffer for audio context usage
      */
-    console.log('com.codinginspace.audio.AudioChannel', `Loading file ${this.objAudioInformation.audioFile}`);
+    console.log('com.codinginspace.audio.AudioChannel', `Loading XHR ${this.objAudioInformation.audioFile}`);
     new Loader(this.objAudioInformation.audioFile)
       .then((arrBuffer) => {
         this.objAudioContext
@@ -39,6 +39,26 @@ export default class AudioChannel {
             this.initAudioSource();
           });
       });
+  }
+  loadAudioChannelFromFile(objAudioInformation = this.objAudioInformation) {
+    this.objAudioInformation = objAudioInformation;
+    this.boolLoading = true;
+    /**
+     * Use reader to create array buffer
+     * Should be loaded via File API e.g input[type="file"]
+     * Process file into reader for array buffer result
+     */
+    console.log('com.codinginspace.audio.AudioChannel', `Loading File ${this.objAudioInformation.audioFile.name}`);
+    let reader = new FileReader();
+    reader.readAsArrayBuffer(this.objAudioInformation.audioFile);
+    reader.onload = function() {
+      this.objAudioContext
+        .decodeAudioData(reader.result, (arrAudioBuffer) => {
+          this.boolLoading = false;
+          this.arrAudioBuffer = arrAudioBuffer;
+          this.initAudioSource();
+        });
+    }.bind(this);
   }
   initAudioSource() {
     /**
