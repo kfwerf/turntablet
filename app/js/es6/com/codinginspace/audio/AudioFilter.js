@@ -14,7 +14,7 @@ export default class AudioFilter {
     switch (strType) {
     case 'volume':
       this.objAudio = this.objAudioContext.createGain();
-      this.objAudio.gain.volume = numAmount;
+      this.objAudio.gain.value = numAmount;
       break;
     case 'gain':
       this.objAudio = this.objAudioContext.createGain();
@@ -48,11 +48,11 @@ export default class AudioFilter {
     return this.objAudio;
   }
   set filterValue(numAmount = 0) {
-    let strKey = this.strType === 'volume' ? 'volume' : 'value';
+    let strKey = 'value';
     this.objAudio.gain[strKey] = numAmount;
   }
   get filterValue() {
-    let strKey = this.strType === 'volume' ? 'volume' : 'value';
+    let strKey = 'value';
     return this.objAudio.gain[strKey];
   }
 }

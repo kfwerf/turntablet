@@ -45,22 +45,33 @@ class AudioMixerViewChannel {
     };
   }
   doGuiEventUnbinding() {
-    Object.observe(this.objGui.songLabel, (arrUpdates) => {
-      arrUpdates.forEach((objUpdated) => {
-        switch (objUpdated.name) {
-        case 'file':
-          this.doLoadAudioFromFile({
-            audioFile: objUpdated.object.file
-          });
-        break;
-        }
-      });
-    });
     this.objGui.playButton
       .removeEventListener('click', this.doPlay);
   }
   doGuiEventBinding() {
+    let doBasicValueCoupling = (strWatchGui, strBindValue) => {
+      let objWatch = this.objGui[strWatchGui];
+      Object.observe(objWatch, () => {
+        let numValue = objWatch.value;
+        this.objAudioChannelModel[strBindValue] = numValue;
+      });
+    };
     this.doGuiEventUnbinding();
+    // Couples file selection with core for loading via observing
+    Object.observe(this.objGui.songLabel, () => {
+      let objFile = this.objGui.songLabel.file;
+      if (objFile.name) {
+        this.doLoadAudioFromFile({
+          audioFile: objFile
+        });
+      }
+    });
+
+    doBasicValueCoupling('volumeSlider', 'volumeValue');
+    doBasicValueCoupling('lowSlider', 'lowValue');
+    doBasicValueCoupling('midSlider', 'midValue');
+    doBasicValueCoupling('highSlider', 'highValue');
+
     this.objGui.playButton
       .addEventListener('click', this.doPlay.bind(this));
   }

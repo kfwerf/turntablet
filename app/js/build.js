@@ -64,25 +64,36 @@ var AudioMixerViewChannel = (function () {
   }, {
     key: 'doGuiEventUnbinding',
     value: function doGuiEventUnbinding() {
-      var _this = this;
-
-      Object.observe(this.objGui.songLabel, function (arrUpdates) {
-        arrUpdates.forEach(function (objUpdated) {
-          switch (objUpdated.name) {
-            case 'file':
-              _this.doLoadAudioFromFile({
-                audioFile: objUpdated.object.file
-              });
-              break;
-          }
-        });
-      });
       this.objGui.playButton.removeEventListener('click', this.doPlay);
     }
   }, {
     key: 'doGuiEventBinding',
     value: function doGuiEventBinding() {
+      var _this = this;
+
+      var doBasicValueCoupling = function doBasicValueCoupling(strWatchGui, strBindValue) {
+        var objWatch = _this.objGui[strWatchGui];
+        Object.observe(objWatch, function () {
+          var numValue = objWatch.value;
+          _this.objAudioChannelModel[strBindValue] = numValue;
+        });
+      };
       this.doGuiEventUnbinding();
+      // Couples file selection with core for loading via observing
+      Object.observe(this.objGui.songLabel, function () {
+        var objFile = _this.objGui.songLabel.file;
+        if (objFile.name) {
+          _this.doLoadAudioFromFile({
+            audioFile: objFile
+          });
+        }
+      });
+
+      doBasicValueCoupling('volumeSlider', 'volumeValue');
+      doBasicValueCoupling('lowSlider', 'lowValue');
+      doBasicValueCoupling('midSlider', 'midValue');
+      doBasicValueCoupling('highSlider', 'highValue');
+
       this.objGui.playButton.addEventListener('click', this.doPlay.bind(this));
     }
   }, {
@@ -377,7 +388,7 @@ var AudioFilter = (function () {
     switch (strType) {
       case 'volume':
         this.objAudio = this.objAudioContext.createGain();
-        this.objAudio.gain.volume = numAmount;
+        this.objAudio.gain.value = numAmount;
         break;
       case 'gain':
         this.objAudio = this.objAudioContext.createGain();
@@ -419,11 +430,11 @@ var AudioFilter = (function () {
     set: function () {
       var numAmount = arguments[0] === undefined ? 0 : arguments[0];
 
-      var strKey = this.strType === 'volume' ? 'volume' : 'value';
+      var strKey = 'value';
       this.objAudio.gain[strKey] = numAmount;
     },
     get: function () {
-      var strKey = this.strType === 'volume' ? 'volume' : 'value';
+      var strKey = 'value';
       return this.objAudio.gain[strKey];
     }
   }]);
