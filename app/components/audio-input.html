@@ -75,6 +75,30 @@ attributes="type, name, accept, file, tags">
       file: {},
       tags: {},
       ready: function() {
+        var getAlbumArt = function (strArtist, strTitle) {
+          return new Promise(function (resolve, reject) {
+            var request = new XMLHttpRequest();
+            var strType = 'album';
+            var strUrl = 'https://api.spotify.com/v1/search?q=' +
+                          strArtist + ' ' + strTitle + '&type=' + strType;
+            request.open('GET', strUrl, true);
+            request.onload = function() {
+              if (request.status >= 200 && request.status < 400) {
+                try {
+                  var data = JSON.parse(request.responseText);
+                  if (!(data.albums) || !data.albums.items.length) {
+                    reject('No albums found');
+                    return false;
+                  }
+                  resolve(data.albums.items[0].images[0].url);
+                } catch (ignore) {
+                  reject('Failed to get first image of first album');
+                }
+              }
+            };
+            request.send();
+          })
+        };
         var elInput = this.shadowRoot.querySelector('input');
         var onFileChange = function () {
           var arrFiles = elInput.files || [];
@@ -85,7 +109,12 @@ attributes="type, name, accept, file, tags">
             this.nofile = 'file-loaded';
             this.name = tags.artist + ' - ' + tags.title;
         		this.tags = tags;
+            getAlbumArt('Dano at', '').then(function (strAlbumUrl) {
+              this.albumArtUrl = strAlbumUrl;
+            }.bind(this));
         	}.bind(this));
+
+
         };
         elInput.addEventListener('change', onFileChange.bind(this));
       }
