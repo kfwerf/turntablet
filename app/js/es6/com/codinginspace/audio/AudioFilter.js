@@ -50,6 +50,7 @@ export default class AudioFilter {
   set filterValue(numAmount = 0) {
     let strKey = 'value';
     this.objAudio.gain[strKey] = numAmount;
+    console.log('com.codinginspace.audio.AudioFilter', `Setting value of ${this.strType} to ${numAmount}`);
   }
   get filterValue() {
     let strKey = 'value';

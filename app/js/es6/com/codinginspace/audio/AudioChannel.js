@@ -77,6 +77,9 @@ export default class AudioChannel {
   getFilterValueByType(strType) {
     return this.objAudioFilters.getFilterValueByType(strType);
   }
+  get isPlaying () {
+    return this.boolPlaying;
+  }
   get volumeValue () {
     return this.getFilterValueByType('volume');
   }
@@ -120,12 +123,14 @@ export default class AudioChannel {
     if (this.objAudioSource) {
       if (this.boolPlaying) {
         this.stopChannel();
+        return false; // If playing we toggle, cue we play when pressed
       }
       if (this.numPitch) {
-        this.pitchValue = numPitch;
+        this.pitchValue = this.numPitch;
       }
       this.objAudioSource.start(0, numStartPoint);
       this.boolPlaying = true;
+      console.log('com.codinginspace.audio.AudioChannel', 'Playing audio');
     } else {
       console.info('No audio source available for playback');
     }
@@ -137,12 +142,14 @@ export default class AudioChannel {
   pauseChannel() {
     this.numStartPoint = this.objAudioSource.context.currentTime;
     this.stopChannel();
+    console.log('com.codinginspace.audio.AudioChannel', 'Pausing audio');
   }
   stopChannel () {
     if (this.objAudioSource) {
       this.objAudioSource.stop();
       this.initAudioSource();
       this.boolPlaying = false;
+      console.log('com.codinginspace.audio.AudioChannel', 'Stopping audio');
     }
   }
 };
