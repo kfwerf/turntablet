@@ -1,3 +1,5 @@
+import id3 from 'id3-parser';
+
 /**
  * @author Kenneth van der Werf
  * @class AudioChannelViewController
@@ -39,6 +41,7 @@ export default class AudioChannelViewController {
       gainSlider: audioChannel.querySelector('slider-input[name="gain"]'),
       volumeSlider: audioChannel.querySelector('slider-input[name="volume"]')
     };
+    console.log(this.objGui)
   }
   doGuiEventUnbinding() {
     this.objGui.playButton

@@ -1,4 +1,6 @@
-<polymer-element
+<link rel="import"
+      href="../../bower_components/polymer/polymer.html">
+<dom-module
 name="audio-input"
 attributes="type, name, accept, file, tags">
   <template>
@@ -68,14 +70,17 @@ attributes="type, name, accept, file, tags">
   </template>
   <script>
     Polymer({
-      type: 'file',
-      name: '',
-      nofile: 'file-notloaded',
-      accept: 'audio/mpeg',
-      file: {},
-      tags: {},
+      is: 'audio-input',
+      properties: {
+        type: 'file',
+        name: '',
+        nofile: 'file-notloaded',
+        accept: 'audio/mpeg',
+        file: {},
+        tags: {}
+      },
       ready: function() {
-        var getAlbumArt = function (strArtist, strTitle) {
+        /*var getAlbumArt = function (strArtist, strTitle) {
           return new Promise(function (resolve, reject) {
             var request = new XMLHttpRequest();
             var strType = 'album';
@@ -99,7 +104,7 @@ attributes="type, name, accept, file, tags">
             request.send();
           })
         };
-        var elInput = this.shadowRoot.querySelector('input');
+        var elInput = this.querySelector('input');
         var onFileChange = function () {
           var arrFiles = elInput.files || [];
           this.file = arrFiles[0] || {};
@@ -114,10 +119,9 @@ attributes="type, name, accept, file, tags">
             }.bind(this));
         	}.bind(this));
 
-
         };
-        elInput.addEventListener('change', onFileChange.bind(this));
+        elInput.addEventListener('change', onFileChange.bind(this));*/
       }
     });
   </script>
-</polymer-element>
+</dom-module>

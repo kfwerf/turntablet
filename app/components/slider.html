@@ -1,3 +1,5 @@
+<link rel="import"
+      href="../../bower_components/polymer/polymer.html">
 <polymer-element name="mixer-slider" attributes="counter">
   <template>
     <style>
@@ -9,12 +11,15 @@
   </template>
   <script>
     Polymer({
-      counter: 0, // Default value
-      counterChanged: function() {
-        this.$.counterVal.classList.add('highlight');
-      },
-      increment: function() {
-        this.counter++;
+      is: 'slider',
+      properties: {
+        counter: 0, // Default value
+        counterChanged: function() {
+          this.$.counterVal.classList.add('highlight');
+        },
+        increment: function() {
+          this.counter++;
+        }
       }
     });
   </script>
