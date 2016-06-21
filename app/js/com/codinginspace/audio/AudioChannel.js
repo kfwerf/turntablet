@@ -50,6 +50,7 @@ export default class AudioChannel {
      */
     console.log('com.codinginspace.audio.AudioChannel', `Loading File ${this.objAudioInformation.audioFile.name}`);
     let reader = new FileReader();
+    console.log(this.objAudioInformation);
     reader.readAsArrayBuffer(this.objAudioInformation.audioFile);
     reader.onload = function() {
       this.objAudioContext

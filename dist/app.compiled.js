@@ -196,10 +196,10 @@
 	      this.doGuiEventUnbinding();
 	      // Couples file selection with core for loading via observing
 	      Object.observe(this.objGui.songLabel, function () {
-	        var objFile = _this.objGui.songLabel.file;
+	        var objFile = _this.objGui.songLabel;
 	        if (objFile.name) {
 	          _this.doLoadAudioFromFile({
-	            audioFile: objFile
+	            audioFile: objFile.file
 	          });
 	        }
 	      });
@@ -259,7 +259,7 @@
 	  }, {
 	    key: 'objAudioChannelModel',
 	    get: function get() {
-	      return this.objAudioMixerModel.getAudioChannelById(this.numChannel);
+	      return this.objAudioMixerModel.getAudioChannelById(this.numChannel);3;
 	    }
 	  }]);
 
@@ -1309,6 +1309,7 @@
 	       */
 	      console.log('com.codinginspace.audio.AudioChannel', 'Loading File ' + this.objAudioInformation.audioFile.name);
 	      var reader = new FileReader();
+	      console.log(this.objAudioInformation);
 	      reader.readAsArrayBuffer(this.objAudioInformation.audioFile);
 	      reader.onload = (function () {
 	        var _this2 = this;

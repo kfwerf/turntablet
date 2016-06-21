@@ -121,6 +121,15 @@ attributes="type, name, accept, file, tags">
 
         };
         elInput.addEventListener('change', onFileChange.bind(this));*/
+        var elInput = this.querySelector('input')
+        var onFileChange = () => {
+          var arrFiles = elInput.files || [];
+          this.file = arrFiles[0] || {};
+          this.name = this.file.name;
+          console.log(this.file, this.name);
+          //elInput.dispatchEvent('')
+        };
+        elInput.addEventListener('change', onFileChange);
       }
     });
   </script>

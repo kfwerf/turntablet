@@ -24,7 +24,7 @@ export default class AudioChannelViewController {
   }
   get objAudioChannelModel() {
     return this.objAudioMixerModel
-      .getAudioChannelById(this.numChannel);
+      .getAudioChannelById(this.numChannel);3
   }
   doGuiElementBinding(strClass) {
     let audioChannel = document.querySelector(strClass);
@@ -58,10 +58,10 @@ export default class AudioChannelViewController {
     this.doGuiEventUnbinding();
     // Couples file selection with core for loading via observing
     Object.observe(this.objGui.songLabel, () => {
-      let objFile = this.objGui.songLabel.file;
+      let objFile = this.objGui.songLabel;
       if (objFile.name) {
         this.doLoadAudioFromFile({
-          audioFile: objFile
+          audioFile: objFile.file
         });
       }
     });
